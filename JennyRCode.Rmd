@@ -1,0 +1,195 @@
+---
+title: "JennyRCode"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(here)
+```
+
+
+```{r}
+datatest <-  read_csv(here("jennytest.csv"))
+```
+
+
+# Make ANALYSABLE DATA
+
+Make a dataframe with just useful variables
+
+```{r}
+names(datatest)
+```
+
+
+```{r}
+
+analysable_data <- datatest %>%
+  select(end_date, progress, response_id, gender, age_in_years, faculty_of_study, research_experience, starts_with("attention_attempt"), perception_1, starts_with("attitude"), starts_with("intention"), manipulation_check_gf_1, manipulation_check_lf_1, group, starts_with("score"))
+```
+
+# CREATING dataframe of INTERESTING SCORES
+
+```{r}
+interesting_scores <- analysable_data %>%
+  select(response_id, group, end_date, progress, gender, age_in_years, faculty_of_study, research_experience,  perception_1, starts_with("attitude"), starts_with("intention"), manipulation_check_gf_1, manipulation_check_lf_1)  
+```
+
+
+# DEALING WITH ATTENTION SCORES
+
+Select just variables related to attention checks/scores. Make score data long. 
+```{r}
+attention_scores <- analysable_data %>%
+  select(end_date, progress, response_id, gender, age_in_years, faculty_of_study, research_experience, group, starts_with("attention_attempt"), starts_with("score")) 
+
+
+attention_scores_long <- attention_scores %>%
+  pivot_longer(names_to = "test_attempt", values_to = "score", score_attempt_1:score_attempt_3) 
+
+```
+
+Trying to summarise how many times each participant attempted test. 
+
+Add a new column testTF that add TRUE/FALSE according to whether the score > 0 or is.na. Turn that variable into a logical. Because logical (TRUEFALSE) are coded as 1, 0, you can sum them. Group by response id, and sum how many TRUES (ie how many tests each participant did)
+
+
+```{r}
+
+attention_attempts <- attention_scores_long %>%
+  mutate(testTF = case_when(score >= 0 ~ "TRUE",
+                            is.na(score) ~ "FALSE"))
+
+glimpse(attention_attempts)
+
+attention_attempts$testTF <- as.logical(attention_attempts$testTF)
+
+attention_attempts %>%
+  group_by(response_id) %>%
+ summarise(number_of_tests = sum(testTF))
+  
+
+```
+
+
+
+NEXT STEPS
+
+- For participants who are taking 3 attempts, are they scoring 5+ in the last attempt? (i.e. should they be included or excluded) (tip use **filter** to get rid of those who don't pass attention check)
+
+
+```{r}
+
+attention_attempts %>% filter(test_attempt == "score_attempt_3") %>%
+  filter(testTF == "TRUE") %>%
+  filter(score <= 4)
+
+```
+
+```{r}
+
+analysable_data %>% filter(score_attempt_3 > 5)
+
+```
+
+```{r}
+
+included_data <- analysable_data %>% filter(response_id != "R_WimZTSSd9X5s26B", response_id != "R_xrRKzEUE3P5jUD7", response_id != "R_2CeygpVUy7RSuOp")
+
+```
+
+Once we have determined how many of these N= 20 should be included, then need to
+- make new variables (tip use **mutate**) for averaged scores for 
+  + attitudes (across 5 items)
+  + intentions (across 4 items)
+  
+```{r}
+
+averaged_data <-
+included_data %>% 
+  rowwise() %>%
+  mutate(mean_attitude=mean(c(attitude_overall_1, attitude_design_1, attitude_data_1, attitude_analyses_1, attitude_access_1, na.rm = TRUE))) %>%
+  mutate(mean_intention=mean(c(intention_design_1, intention_data_1, intention_analyses_1, intention_access_1, na.rm = TRUE)))
+
+```
+ 
+ Get summary stats
+ - does there look like there are group differences in M perception, attitude and intention scores (tip = use **group_by** + **summarise**)
+
+```{r}
+
+data_summary <-
+averaged_data %>%
+  group_by(group) %>%
+    summarise(perception_by_group_mean = mean(perception_1, na.rm = TRUE),
+              attitude_by_group = mean(mean_attitude, na.rm = TRUE),
+              intention_by_group = mean(mean_intention, na.rm = TRUE),
+              manipulation_gf_by_group = mean(manipulation_check_gf_1, na.rm = TRUE),
+              manipulation_lf_by_group = mean(manipulation_check_lf_1, na.rm = TRUE))
+
+```
+
+**ggplot** group differences in... x = group y = perception/attitude/intention
+
+- perception
+- average attitude
+- average intention
+- manipulation check positive
+- manipulation check negative
+
+NOTE: make plots with both raw data and means
+
+
+Test whether those group difference are significant
+
+Perception
+
+```{r}
+
+perception_summary <- averaged_data %>%
+  group_by(group) %>%
+  summarise(mean = mean(perception_1), 
+            sd = sd(perception_1), 
+            n = n(), 
+            stderr = sd / sqrt(n))
+            
+  print(perception_summary)
+  
+```
+
+```{r}
+
+averaged_data %>%
+  ggplot(aes(x = group, y = perception_1, fill = group)) +
+    geom_col() +
+   geom_errorbar(aes(ymin = mean - stderr, ymax = mean + stderr), 
+                size = .3, #thinner lines
+                width = .2) #narrower error bar
+    theme_classic()
+
+```
+
+Attitude
+
+```{r}
+
+attitude_summary <- averaged_data %>%
+  group_by(group) %>%
+  summarise(mean = mean(mean_attitude, na.rm = TRUE), 
+            sd = sd(mean_attitude, na.rm = TRUE), 
+            n = n(), 
+            stderr = sd / sqrt(n))
+            
+  print(attitude_summary)
+  
+```
+
+
+
+
+

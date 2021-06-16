@@ -1,0 +1,89 @@
+---
+title: "read qualtrics data"
+author: "Jen Richmond"
+date: "12/03/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# load packages + set API
+
+The qualtRics package reads data straight from qualtrics into R via the API. 
+
+https://cran.r-project.org/web/packages/qualtRics/vignettes/qualtRics.html
+
+
+```{r message=FALSE, warning=FALSE}
+library(qualtRics)
+library(tidyverse)
+library(janitor)
+library(here)
+
+qualtrics_api_credentials(api_key = "RZNCuPM7MvUJmhi7wcSLN7NHx0WCVeIU6H7XiSeE",
+                          base_url = "unsw.syd1.qualtrics.com",
+                          install = TRUE, 
+                          overwrite = TRUE)
+
+```
+
+restart R or set enviornment 
+```{r}
+readRenviron("~/.Renviron")
+```
+
+
+# get surveys
+
+```{r}
+surveys <-  all_surveys()
+```
+
+
+# details
+
+Get list of survey IDs
+
+```{r}
+surveys$id
+```
+
+JennyC surveyID = SV_d4PE06XiLBkNmse
+
+```{r}
+questions <- survey_questions(surveyID = "SV_d4PE06XiLBkNmse")
+```
+
+
+include_questions = c("QID1", "QID2", "QID3"),
+
+```{r}
+datatest <- fetch_survey(surveyID = "SV_d4PE06XiLBkNmse", 
+                         force_request = TRUE, 
+                         verbose = TRUE) %>%
+  clean_names()
+
+
+```
+
+
+
+
+Pulling out identifcable details for people who want to hear about results 
+```{r}
+
+consent_results <- datatest %>%
+  select(name, address, email_address, consent) 
+
+consent_results %>%
+  write_csv(here("data", "identifiable_details", "people_who_want_results.csv" ))
+
+```
+
+# PULL JUST A SECTION TO PLAY WITH 
+
+```{r}
+datatest <- sample_n(datatest, 20)
+
