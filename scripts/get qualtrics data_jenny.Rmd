@@ -35,21 +35,6 @@ readRenviron("~/.Renviron")
 ```
 
 
-# get surveys
-
-```{r}
-surveys <-  all_surveys()
-```
-
-
-# details
-
-Get list of survey IDs
-
-```{r}
-surveys$id
-```
-
 JennyC surveyID = SV_d4PE06XiLBkNmse
 
 ```{r}
@@ -69,8 +54,6 @@ datatest <- fetch_survey(surveyID = "SV_d4PE06XiLBkNmse",
 ```
 
 
-
-
 Pulling out identifcable details for people who want to hear about results 
 ```{r}
 
@@ -85,5 +68,10 @@ consent_results %>%
 # PULL JUST A SECTION TO PLAY WITH 
 
 ```{r}
-datatest <- sample_n(datatest, 20)
+datatest20 <- sample_n(datatest, 20)
+
+datatest20 %>%
+  write_csv(here("data", "jennytest.csv"))
+
+```
 

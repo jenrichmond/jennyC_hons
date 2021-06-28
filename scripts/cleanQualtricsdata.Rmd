@@ -1,0 +1,79 @@
+---
+title: "cleanQualtricsdata"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(here)
+```
+
+
+```{r}
+datatest <-  read_csv(here("data", "jennytest.csv"))
+```
+
+
+# select just variables of interest
+
+Make a dataframe with just useful variables
+
+
+Selecting just participant details, ratings of perception, attitude, intention, manipulation checks and attention variables. Lets keep attention and other variables together for now. 
+```{r}
+
+data_select <- datatest %>%
+  select(end_date, progress, response_id, group, gender, age_in_years, faculty_of_study, research_experience, perception_1, starts_with("attitude"), starts_with("intention"), manipulation_check_gf_1, manipulation_check_lf_1, starts_with("attention_attempt"),  starts_with("score"))
+
+```
+
+
+# filter out participants who didn't complete the whole survey
+
+Looks like there are some value of < 100 in the progress column. Filter out those that didn't complete the survey. 
+
+```{r}
+
+```
+
+# create new exclude column for attention scores 
+
+I think it is easier to do this without making the data long...
+
+use mutate and case_when to create a new column that puts "include" or "exclude" in the column, depending on performance on score_attempt 1, 2 and 3. If they get >-5 on 1, 2, or, 3 then 'include', if they get <=4 on attempt 3 then 'exclude'
+
+http://jenrichmond.rbind.io/post/mutate-and-if-else-to-create-new-variables/ 
+
+```{r}
+    
+```
+
+# filter out those that get exclude in above column 
+
+Filter out those excluded for attention fail, then drop atten/score columns from the dataframe using select(). 
+
+```{r}
+
+  
+```
+
+#  exclude participants who didn't answer enough attitude/intention qs 
+
+from prereg: If a participant does not complete the single perceived severity question, at least 3 of 5 attitude questions, or at least 2 of 4 implementation intenxstion questions, the participant’s response will be excluded from the analysis for that particular dependent variable. 
+
+Need to count how many NAs each participant has across perception, attitude and intention qs and exclude if more than 0 (perception) or 2 (attitude and intention)
+
+```{r}
+
+
+
+```
+
+
+
+
+

@@ -1,45 +1,13 @@
 ---
-title: "JennyRCode"
+title: "old_code"
+author: "Jen Richmond"
+date: "28/06/2021"
 output: html_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-
-```{r}
-library(tidyverse)
-library(here)
-```
-
-
-```{r}
-datatest <-  read_csv(here("jennytest.csv"))
-```
-
-
-# Make ANALYSABLE DATA
-
-Make a dataframe with just useful variables
-
-```{r}
-names(datatest)
-```
-
-
-```{r}
-
-analysable_data <- datatest %>%
-  select(end_date, progress, response_id, gender, age_in_years, faculty_of_study, research_experience, starts_with("attention_attempt"), perception_1, starts_with("attitude"), starts_with("intention"), manipulation_check_gf_1, manipulation_check_lf_1, group, starts_with("score"))
-```
-
-# CREATING dataframe of INTERESTING SCORES
-
-```{r}
-interesting_scores <- analysable_data %>%
-  select(response_id, group, end_date, progress, gender, age_in_years, faculty_of_study, research_experience,  perception_1, starts_with("attitude"), starts_with("intention"), manipulation_check_gf_1, manipulation_check_lf_1)  
-```
-
 
 # DEALING WITH ATTENTION SCORES
 
