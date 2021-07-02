@@ -38,6 +38,9 @@ Looks like there are some value of < 100 in the progress column. Filter out thos
 
 ```{r}
 
+progress_filtered <- data_select %>%
+  filter(progress == "100")
+
 ```
 
 # create new exclude column for attention scores 
@@ -49,7 +52,13 @@ use mutate and case_when to create a new column that puts "include" or "exclude"
 http://jenrichmond.rbind.io/post/mutate-and-if-else-to-create-new-variables/ 
 
 ```{r}
-    
+
+exclude_column <- progress_filtered %>%
+  mutate(exclusion = case_when(score_attempt_1 >= 5 ~ 'Include',
+                               score_attempt_2 >= 5 ~ 'Include',
+                               score_attempt_3 >= 5 ~ 'Include',
+                               TRUE ~ 'Exclude'))
+
 ```
 
 # filter out those that get exclude in above column 
@@ -58,7 +67,12 @@ Filter out those excluded for attention fail, then drop atten/score columns from
 
 ```{r}
 
-  
+attention_filtered <- exclude_column %>%
+  filter(exclusion == "Include")
+
+important_data <- attention_filtered %>%
+  select(end_date, progress, response_id, group, gender, age_in_years, faculty_of_study, research_experience, perception_1, starts_with("attitude"), starts_with("intention"), manipulation_check_gf_1, manipulation_check_lf_1, exclusion)
+
 ```
 
 #  exclude participants who didn't answer enough attitude/intention qs 
@@ -69,7 +83,15 @@ Need to count how many NAs each participant has across perception, attitude and 
 
 ```{r}
 
+na_count <- important_data %>%
+  rowwise %>%
+  summarise(NA_per_row = sum(is.na(important_data)))
 
+  count(perception_1, wt = NULL, sort = FALSE, name = NULL)
+  sum(is.na(perception_1))
+  sum(complete.cases(important_data))
+  sum(perception_1 == value, na.rm=FALSE)
+  apply(perception_1, MARGIN = 1, function(x) sum(is.na(x)))
 
 ```
 
