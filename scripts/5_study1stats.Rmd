@@ -1,0 +1,22 @@
+---
+title: "5_study1stats"
+author: "Jen Richmond"
+date: "13/07/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(here)
+library(jmv)
+```
+
+
+```{r}
+clean_data <- read_csv(here("data", "dateStudy1data_clean.csv"))
+```
+
