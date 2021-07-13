@@ -13,7 +13,7 @@ library(here)
 ```
 
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 datatest <-  read_csv(here("data", "2021-07-13_Study1data.csv"))
 ```
 
@@ -21,7 +21,6 @@ datatest <-  read_csv(here("data", "2021-07-13_Study1data.csv"))
 # select just variables of interest
 
 Make a dataframe with just useful variables
-
 
 Selecting just participant details, ratings of perception, attitude, intention, manipulation checks and attention variables. Lets keep attention and other variables together for now. 
 ```{r}
@@ -73,36 +72,21 @@ attention_filtered <- exclude_column %>%
 important_data <- attention_filtered %>%
   select(end_date, progress, response_id, group, gender, age_in_years, faculty_of_study, research_experience, perception_1, starts_with("attitude"), starts_with("intention"), manipulation_check_gf_1, manipulation_check_lf_1, exclusion)
 
-important_data %>%
-  write_csv(here::here("data", "impt_data.csv"))
 
 ```
 
 #  exclude participants who didn't answer enough attitude/intention qs 
 
-from prereg: If a participant does not complete the single perceived severity question, at least 3 of 5 attitude questions, or at least 2 of 4 implementation intenxstion questions, the participant’s response will be excluded from the analysis for that particular dependent variable. 
+from prereg: If a participant does not complete the single perceived severity question, at least 3 of 5 attitude questions, or at least 2 of 4 implementation intention questions, the participant’s response will be excluded from the analysis for that particular dependent variable. 
 
 Need to count how many NAs each participant has across perception, attitude and intention qs and exclude if more than 0 (perception) or 2 (attitude and intention)
 
-```{r}
 
-na_count <- important_data %>%
-  rowwise() %>%
-  summarise(NA_per_row = sum(is.na(important_data)))
-
-  count(perception_1, wt = NULL, sort = FALSE, name = NULL)
-  sum(is.na(perception_1))
-  sum(complete.cases(important_data))
-  sum(perception_1 == value, na.rm=FALSE)
-  apply(perception_1, MARGIN = 1, function(x) sum(is.na(x)))
-
-```
-
-Select just attitude variables 
+Select just each "batch" batch of questions separtely and add a new column that counts NAs for each question set. 
 ```{r}
 
 perception <- important_data %>%
-  select(response_id, starts_with("perception")) %>%
+  select(response_id, group, starts_with("perception")) %>%
    mutate(per_missed = rowSums(is.na(.))) 
 
 attitude <- important_data %>%
@@ -114,15 +98,20 @@ intention <- important_data %>%
    mutate(intmissed = rowSums(is.na(.))) 
 
 all_ratings <- cbind(perception, attitude, intention) %>%
-  select(-4, -11) %>% # drop extra id columns
+  select(-5, -12) %>% # drop extra id columns
  relocate(per_missed, .before = intmissed) %>%
    relocate(att_missed, .before = intmissed) 
 
 ```
 
 
-```{r}
-na_replace
-```
+TO DO NEXT
+
+A. exclusions
+
+Working in 2_cleanStudy1_qualtricsdata.Rmd
+1.  are there any participants who have too many missing answers from attitude/intention? 
+2.  write clean data to .csv calling it "dateStudy1data_clean.csv"
+
 
 
