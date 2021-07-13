@@ -1,5 +1,5 @@
 ---
-title: "read qualtrics data"
+title: "read Study 1 qualtrics data"
 author: "Jen Richmond"
 date: "12/03/2021"
 output: html_document
@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # load packages + set API
 
-The qualtRics package reads data straight from qualtrics into R via the API. 
+The qualtRics package reads data straight from qualtrics into R via the API and saves the dataset as a .csv in the data folder. 
 
 https://cran.r-project.org/web/packages/qualtRics/vignettes/qualtRics.html
 
@@ -27,10 +27,9 @@ qualtrics_api_credentials(api_key = "RZNCuPM7MvUJmhi7wcSLN7NHx0WCVeIU6H7XiSeE",
                           install = TRUE, 
                           overwrite = TRUE)
 
-```
 
-restart R or set enviornment 
-```{r}
+# restart R or set enviornment 
+
 readRenviron("~/.Renviron")
 ```
 
@@ -42,22 +41,29 @@ questions <- survey_questions(surveyID = "SV_d4PE06XiLBkNmse")
 ```
 
 
-include_questions = c("QID1", "QID2", "QID3"),
 
 ```{r}
-datatest <- fetch_survey(surveyID = "SV_d4PE06XiLBkNmse", 
+data <- fetch_survey(surveyID = "SV_d4PE06XiLBkNmse", 
                          force_request = TRUE, 
                          verbose = TRUE) %>%
-  clean_names()
+  clean_names() 
+
+currentDate <- Sys.Date()
+
+csvFileName <- paste(currentDate,"_Study1data.csv",sep="")
+
+data %>% write_csv(here("data", file=csvFileName))
+
+
 
 
 ```
 
 
-Pulling out identifcable details for people who want to hear about results 
+Pulling out identifiable details for people who want to hear about results 
 ```{r}
 
-consent_results <- datatest %>%
+consent_results <- data %>%
   select(name, address, email_address, consent) 
 
 consent_results %>%
@@ -68,10 +74,10 @@ consent_results %>%
 # PULL JUST A SECTION TO PLAY WITH 
 
 ```{r}
-datatest20 <- sample_n(datatest, 20)
+datatest20 <- sample_n(data, 20)
 
 datatest20 %>%
-  write_csv(here("data", "jennytest.csv"))
+  write_csv(here("data", "N20jennytest.csv"))
 
 ```
 
