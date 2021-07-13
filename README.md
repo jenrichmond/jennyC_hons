@@ -15,7 +15,8 @@ This repo contains code and analysis for Jenny's honours thesis re gain vs loss 
 
 Working in 2_cleanStudy1_qualtricsdata.Rmd
 1.  are there any participants who have too many missing answers from attitude/intention? 
-2.  write clean data to .csv calling it "dateStudy1data_clean.csv"
+2. calculate mean attitude and intention ratings across items (row_wise, mutate)
+3. write clean data to .csv calling it "dateStudy1data_clean.csv"
 
 ## B.  descriptives
 
