@@ -146,8 +146,13 @@ JC: Also try all_means <- cbind(filtered_per, averaged_att, averaged_int)
 
 ```{r}
 
-all_means <- merge(averaged_att, averaged_int, by = 'response_id') %>%
+att_int_means <- merge(averaged_att, averaged_int, by = 'response_id') %>%
   select (1, 10, 17)
+
+all_means <- merge(att_int_means, filtered_per, by = 'response_id') %>%
+  select (1:5) %>%
+ relocate(mean_att, .after = perception_1) %>%
+   relocate(mean_int, .before = mean_att) 
 
 ```
 
