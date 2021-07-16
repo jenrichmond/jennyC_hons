@@ -10,6 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 library(tidyverse)
 library(here)
+library(janitor)
 ```
 
 ```{r message=FALSE, warning=FALSE}
@@ -33,10 +34,15 @@ data_select <- datatest %>%
 
 Looks like there are some value of < 100 in the progress column. Filter out those that didn't complete the survey. 
 
+Goes from 175 to 161 participants = 14 participants didn't finish
+
 ```{r}
 
 progress_filtered <- data_select %>%
   filter(progress == "100")
+
+progress_filtered %>% 
+  count()
 
 ```
 
@@ -51,7 +57,7 @@ http://jenrichmond.rbind.io/post/mutate-and-if-else-to-create-new-variables/
 ```{r}
 
 exclude_column <- progress_filtered %>%
-  mutate(exclusion = case_when(score_attempt_1 >= 5 ~ 'Include',
+  mutate(atten_exclusion = case_when(score_attempt_1 >= 5 ~ 'Include',
                                score_attempt_2 >= 5 ~ 'Include',
                                score_attempt_3 >= 5 ~ 'Include',
                                TRUE ~ 'Exclude'))
@@ -62,13 +68,15 @@ exclude_column <- progress_filtered %>%
 
 Filter out those excluded for attention fail, then drop atten/score columns from the dataframe using select(). 
 
+Goes from 161 to 145 participants = 16 participants fail atten checks
+
 ```{r}
 
 attention_filtered <- exclude_column %>%
-  filter(exclusion == "Include")
+  filter(atten_exclusion == "Include")
 
 important_data <- attention_filtered %>%
-  select(end_date, progress, response_id, group, gender, age_in_years, faculty_of_study, research_experience, perception_1, starts_with("attitude"), starts_with("intention"), manipulation_check_gf_1, manipulation_check_lf_1, exclusion)
+  select(end_date, progress, response_id, group, gender, age_in_years, faculty_of_study, research_experience, perception_1, starts_with("attitude"), starts_with("intention"), manipulation_check_gf_1, manipulation_check_lf_1, atten_exclusion)
 
 ```
 
@@ -84,53 +92,105 @@ Select just each "batch" batch of questions separtely and add a new column that 
 
 perception <- important_data %>%
   select(response_id, group, starts_with("perception")) %>%
-   mutate(per_missed = rowSums(is.na(.))) 
+   mutate(per_missed = rowSums(is.na(.))) %>%
+  mutate(per_exclude = case_when(per_missed == 0 ~ 'Include',
+                               TRUE ~ 'Exclude'))
 
 attitude <- important_data %>%
   select(response_id, starts_with("attitude")) %>%
-   mutate(att_missed = rowSums(is.na(.))) 
+   mutate(att_missed = rowSums(is.na(.))) %>%
+  mutate(att_exclude = case_when(att_missed <= 2 ~ 'Include',
+                               TRUE ~ 'Exclude'))
 
 intention <- important_data %>%
   select(response_id, starts_with("intention")) %>%
-   mutate(int_missed = rowSums(is.na(.))) 
+   mutate(int_missed = rowSums(is.na(.))) %>%
+   mutate(int_exclude = case_when(int_missed <= 2 ~ 'Include',
+                               TRUE ~ 'Exclude'))
+
 
 all_ratings <- cbind(perception, attitude, intention) %>%
-  select(-5, -12) %>% # drop extra id columns
+  select(-6, -14) %>% # drop extra id columns
  relocate(per_missed, .before = int_missed) %>%
-   relocate(att_missed, .before = int_missed) 
+   relocate(att_missed, .before = int_missed) %>%
+  relocate(per_exclude, .before = int_exclude) %>%
+  relocate(att_exclude, .before = int_exclude) 
 
 ```
+
+count how many participants in questio type to exclude?
+```{r}
+
+all_ratings %>%
+  tabyl(per_exclude)
+
+all_ratings %>%
+  tabyl(att_exclude)
+
+all_ratings %>%
+  tabyl(int_exclude)
+
+```
+
+Look at each case separately...
+
+Perception first, for this single item it doesn't matter; the analysis will exclude the item because it is NA. 
+```{r}
+per_ex <- all_ratings %>%
+  filter(per_exclude == "Exclude")
+
+```
+
+Intention, also not a problem. One participant missed ALL of the intention questions. Because their responses for all items are already NA can just leave it as is.  Their responses for the overall and analyses questions need to be changed to NA. 
+
+```{r}
+int_ex <- all_ratings %>%
+  filter(int_exclude == "Exclude")
+```
+
+Attitude, this one needs to be fixed. One participant missed design, data, and access questions. Their responses for two questions they did answer (overall analyses) need to be changed to NA. 
+```{r}
+att_ex <- all_ratings %>%
+  filter(att_exclude == "Exclude")
+
+# who is that guy?
+att_ex$response_id
+
+```
+
+
+# apply that code to the all ratings df
+
+Switching to ifelse because I couldnt work out how to stop it from turning ALL the values in the col to NA. ifelse works like if responseID == the bad guy, turn it to NA, otherwise put value from att_overall1
+```{r}
+all_ratings <- all_ratings %>%
+  mutate(attitude_overall_1 = ifelse(response_id == "R_1F2IfmtZ4IB7wDR", NA, attitude_overall_1)) %>%
+  mutate(attitude_analyses_1 = ifelse(response_id == "R_1F2IfmtZ4IB7wDR", NA, attitude_analyses_1)) 
+  
+
+# check that problem is fixed
+
+all_ratings %>%
+  filter(response_id == "R_1F2IfmtZ4IB7wDR")
+
+# yes
+
+```
+
+
+
 
 TO DO NEXT
 
 Working in 2_cleanStudy1_qualtricsdata.Rmd
 A. exclusions
 1.  are there any participants who have too many missing answers from attitude/intention?
+DONE
 
-```{r}
+NEXT calculate row means.... 
 
-missing_per <- perception %>%
-  mutate(exclusion = case_when(per_missed == 0 ~ 'Include',
-                               TRUE ~ 'Exclude'))
 
-filtered_per <- missing_per %>%
-  filter(exclusion == "Include")
 
-missing_att <- attitude %>%
-  mutate(exclusion = case_when(att_missed <= 2 ~ 'Include',
-                               TRUE ~ 'Exclude'))
-
-filtered_att <- missing_att %>%
-  filter(exclusion == "Include")
-
-missing_int <- intention %>%
-  mutate(exclusion = case_when(int_missed <= 2 ~ 'Include',
-                               TRUE ~ 'Exclude'))
-
-filtered_int <- missing_int %>%
-  filter(exclusion == "Include")
-
-```
 
 ```{r}
 
