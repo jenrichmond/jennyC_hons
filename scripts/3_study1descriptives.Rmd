@@ -19,3 +19,57 @@ library(here)
 ```{r}
 clean_data <- read_csv(here("data", "dateStudy1data_clean.csv"))
 ```
+
+Categorical variable: group
+Continuous variable: perception_1, mean_att, mean_int
+
+Mean ratings for gain and loss manipulation check by group
+
+```{r}
+
+```
+
+Mean ratings for perception by group
+
+```{r}
+
+summary_perception <- clean_data %>%
+  group_by(group) %>%
+  summarise(mean = mean(perception_1, na.rm=TRUE), 
+            sd = sd(perception_1, na.rm=TRUE), 
+            n = n(), 
+            stderr = sd / sqrt(n))
+
+  print(summary_perception)
+
+```
+
+Mean ratings for attitude by group
+
+```{r}
+
+summary_attitude <- clean_data %>%
+  group_by(group) %>%
+  summarise(mean = mean(mean_att, na.rm=TRUE), 
+            sd = sd(mean_att, na.rm=TRUE), 
+            n = n(), 
+            stderr = sd / sqrt(n))
+
+  print(summary_attitude)
+
+```
+
+Mean ratings for intention by group
+
+```{r}
+
+summary_intention <- clean_data %>%
+  group_by(group) %>%
+  summarise(mean = mean(mean_int, na.rm=TRUE), 
+            sd = sd(mean_int, na.rm=TRUE), 
+            n = n(), 
+            stderr = sd / sqrt(n))
+
+  print(summary_intention)
+
+```
