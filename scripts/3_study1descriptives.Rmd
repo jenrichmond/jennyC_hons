@@ -73,3 +73,26 @@ summary_intention <- clean_data %>%
   print(summary_intention)
 
 ```
+
+All mean ratings
+
+```{r}
+
+summary_ratings <- clean_data %>%    
+  group_by(group) %>%
+  summarise(per_M = mean(perception_1, na.rm = TRUE),
+            perSD = sd(perception_1, na.rm = TRUE), 
+            perN = n(), 
+            perStdErr =  perSD/sqrt(perN),
+            att_M = mean(mean_att, na.rm = TRUE),
+            attSD = sd(mean_att, na.rm = TRUE), 
+            attN = n(), 
+            attStdErr =  attSD/sqrt(attN),
+            int_M = mean(mean_att, na.rm = TRUE),
+            intSD = sd(mean_att, na.rm = TRUE), 
+            intN = n(), 
+            intStdErr =  intSD/sqrt(intN))
+
+print(summary_ratings)
+
+```
