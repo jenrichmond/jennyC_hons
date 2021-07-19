@@ -20,3 +20,29 @@ library(jmv)
 clean_data <- read_csv(here("data", "dateStudy1data_clean.csv"))
 ```
 
+Perception
+
+```{r}
+
+clean_data %>%
+ttestIS(formula = perception_1 ~ group)
+
+```
+
+Attitude
+
+```{r}
+
+clean_data %>%
+ttestIS(formula = mean_att ~ group)
+
+```
+
+Intention
+
+```{r}
+
+clean_data %>%
+ttestIS(formula = mean_int ~ group)
+
+```
