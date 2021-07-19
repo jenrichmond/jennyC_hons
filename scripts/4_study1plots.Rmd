@@ -19,3 +19,61 @@ library(ggeasy)
 ```{r}
 clean_data <- read_csv(here("data", "dateStudy1data_clean.csv"))
 ```
+
+Categorical variable: group
+Continuous variable: perception_1, mean_att, mean_int
+
+Mean ratings for gain and loss manipulation check by group
+
+```{r}
+
+```
+
+Mean ratings for perception by group
+
+```{r}
+
+summary_ratings <- summary_ratings %>%
+  mutate(group = factor(group, 
+                        levels = c(1, 2),
+                        labels = c("gain", "loss")))
+
+summary_ratings %>%
+  ggplot(aes(x = group, y = per_M,)) +
+  geom_col() +
+  scale_y_continuous(limits = c(0,5)) +
+  geom_errorbar(aes(ymin=per_M-perStdErr, ymax=per_M+perStdErr),
+                size=.3, 
+                width=.2) +
+  theme_classic() +
+  labs(title = "Mean perception ratings by group")
+
+```
+
+Mean ratings for attitude by group
+
+```{r}
+
+summary_ratings <- summary_ratings %>%
+  mutate(group = factor(group, 
+                        levels = c(1, 2),
+                        labels = c("gain", "loss")))
+
+summary_ratings %>%
+  ggplot(aes(x = group, y = att_M)) +
+  geom_col() +
+  scale_y_continuous(limits = c(0,5)) +
+  geom_errorbar(aes(ymin=att_M-attStdErr, ymax=att_M+attStdErr),
+                size=.3, 
+                width=.2) +
+  theme_classic() +
+  labs(title = "Mean attitude ratings by group")
+
+```
+
+Mean ratings for intention by group
+
+```{r}
+
+```
+
