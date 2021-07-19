@@ -96,3 +96,10 @@ summary_ratings <- clean_data %>%
 print(summary_ratings)
 
 ```
+
+```{r}
+
+summary_ratings %>%
+  write_csv(here("data", "summary_ratings.csv" ))
+
+```
