@@ -78,7 +78,7 @@ All mean ratings
 
 ```{r}
 
-summary_ratings <- clean_data %>%    
+summary_data <- clean_data %>%    
   group_by(group) %>%
   summarise(per_M = mean(perception_1, na.rm = TRUE),
             perSD = sd(perception_1, na.rm = TRUE), 
@@ -93,13 +93,13 @@ summary_ratings <- clean_data %>%
             intN = n(), 
             intStdErr =  intSD/sqrt(intN))
 
-print(summary_ratings)
+print(summary_data)
 
 ```
 
 ```{r}
 
-summary_ratings %>%
-  write_csv(here("data", "summary_ratings.csv" ))
+summary_data %>%
+  write_csv(here("data", "summary_data.csv" ))
 
 ```
