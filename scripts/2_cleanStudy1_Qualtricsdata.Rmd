@@ -118,7 +118,7 @@ all_ratings <- cbind(perception, attitude, intention) %>%
 
 ```
 
-count how many participants in questio type to exclude?
+count how many participants in question type to exclude?
 ```{r}
 
 all_ratings %>%
@@ -177,9 +177,6 @@ all_ratings %>%
 
 ```
 
-
-
-
 TO DO NEXT
 
 Working in 2_cleanStudy1_qualtricsdata.Rmd
@@ -189,31 +186,21 @@ DONE
 
 NEXT calculate row means.... 
 
-
-
-
 ```{r}
 
-averaged_att <- filtered_att %>%
-  mutate(mean_att = rowMeans(.[2:6], na.rm=TRUE))
-
-averaged_int <- filtered_int %>%
-  mutate(mean_int = rowMeans(.[2:5], na.rm=TRUE))
+mean_ratings <- all_ratings %>%
+  mutate(mean_att = rowMeans(.[4:8], na.rm=TRUE)) %>%
+  mutate(mean_int = rowMeans(.[9:12], na.rm=TRUE)) %>%
+  select (response_id, group, perception_1, mean_att, mean_int)
 
 ```
 
-JC: Also try all_means <- cbind(filtered_per, averaged_att, averaged_int)
-
-```{r}
-
-att_int_means <- merge(averaged_att, averaged_int, by = 'response_id') %>%
-  select (1, 10, 17)
-
-all_means <- merge(att_int_means, filtered_per, by = 'response_id') %>%
-  select (1:5) %>%
- relocate(mean_att, .after = perception_1) %>%
-   relocate(mean_int, .before = mean_att) 
-
-```
 
 2.  write clean data to .csv calling it "dateStudy1data_clean.csv"
+
+```{r}
+
+write.csv(mean_ratings,"dateStudy1data_clean.csv")
+
+```
+
