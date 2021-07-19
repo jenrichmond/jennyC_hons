@@ -200,7 +200,8 @@ mean_ratings <- all_ratings %>%
 
 ```{r}
 
-write.csv(mean_ratings,"dateStudy1data_clean.csv")
+mean_ratings %>%
+  write_csv(here("data", "dateStudy1data_clean.csv" ))
 
 ```
 
