@@ -29,13 +29,21 @@ summary_data <- read_csv(here("data", "summary_data.csv"))
 Categorical variable: group
 Continuous variable: perception_1, mean_att, mean_int
 
-Mean ratings for gain and loss manipulation check by group
+#Mean ratings for gain and loss manipulation check by group
+
+Column graph:
 
 ```{r}
 
 ```
 
-Mean ratings for perception by group
+Geom jitter plot:
+
+```{r}
+
+```
+
+#Mean ratings for perception by group
 
 Column graph:
 
@@ -77,7 +85,7 @@ clean_data %>%
 
 ```
 
-Mean ratings for attitude by group
+#Mean ratings for attitude by group
 
 Column graph:
 
@@ -119,7 +127,7 @@ clean_data %>%
 
 ```
 
-Mean ratings for intention by group
+#Mean ratings for intention by group
 
 Column graph:
 
