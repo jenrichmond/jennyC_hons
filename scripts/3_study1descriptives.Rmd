@@ -97,6 +97,8 @@ print(summary_data)
 
 ```
 
+Saving summary data (M, SD, N, StdErr) as a csv
+
 ```{r}
 
 summary_data %>%
