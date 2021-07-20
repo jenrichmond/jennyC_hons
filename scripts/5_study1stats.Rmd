@@ -20,6 +20,24 @@ library(jmv)
 clean_data <- read_csv(here("data", "dateStudy1data_clean.csv"))
 ```
 
+Gain-Frame Manipulation Check
+
+```{r}
+
+clean_data %>%
+ttestIS(formula = manipulation_check_gf_1 ~ group)
+
+```
+
+Loss-Frame Manipulation Check
+
+```{r}
+
+clean_data %>%
+ttestIS(formula = manipulation_check_lf_1 ~ group)
+
+```
+
 Perception
 
 ```{r}
