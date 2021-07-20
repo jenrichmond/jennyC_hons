@@ -29,17 +29,87 @@ summary_data <- read_csv(here("data", "summary_data.csv"))
 Categorical variable: group
 Continuous variable: perception_1, mean_att, mean_int
 
-#Mean ratings for gain and loss manipulation check by group
+#Mean ratings for gain manipulation check by group
 
 Column graph:
 
 ```{r}
+
+summary_data <- summary_data %>%
+  mutate(group = factor(group, 
+                        levels = c(1, 2),
+                        labels = c("gain", "loss")))
+
+summary_data %>%
+    ggplot(aes(x = group, y = gf_M)) +
+    geom_col() +
+    scale_y_continuous(limits = c(0,5)) +
+    geom_errorbar(aes(ymin=gf_M-gfStdErr, ymax=gf_M+gfStdErr),
+                  size=.3, 
+                  width=.2) +
+  theme_classic() +
+  labs(title = "To what extent did the information stress the positive benefits of adopting open science practices?")
 
 ```
 
 Geom jitter plot:
 
 ```{r}
+
+clean_data <- clean_data %>%
+  mutate(group = factor(group, 
+                        levels = c(1, 2),
+                        labels = c("gain", "loss")))
+
+clean_data %>%
+  group_by(group) %>%
+  ggplot(aes(x = group, y = manipulation_check_gf_1)) +
+  geom_jitter() +
+  scale_y_continuous(limits = c(0,5)) +
+  theme_classic() +
+  labs(title = "To what extent did the information stress the positive benefits of adopting open science practices?")
+
+```
+
+#Mean ratings for loss manipulation check by group
+
+Column graph:
+
+```{r}
+
+summary_data <- summary_data %>%
+  mutate(group = factor(group, 
+                        levels = c(1, 2),
+                        labels = c("gain", "loss")))
+
+summary_data %>%
+  ggplot(aes(x = group, y = lf_M)) +
+  geom_col() +
+  scale_y_continuous(limits = c(0,5)) +
+  geom_errorbar(aes(ymin=lf_M - lfStdErr, ymax=lf_M + lfStdErr),
+                size=.3, 
+                width=.2) +
+  theme_classic() +
+  labs(title = "To what extent did the information stress the negative consequences of not adopting open science practices?")
+
+```
+
+Geom jitter plot:
+
+```{r}
+
+clean_data <- clean_data %>%
+  mutate(group = factor(group, 
+                        levels = c(1, 2),
+                        labels = c("gain", "loss")))
+
+clean_data %>%
+  group_by(group) %>%
+  ggplot(aes(x = group, y = manipulation_check_lf_1)) +
+  geom_jitter() +
+  scale_y_continuous(limits = c(0,5)) +
+  theme_classic() +
+  labs(title = "To what extent did the information stress the negative consequences of not adopting open science practices?")
 
 ```
 
