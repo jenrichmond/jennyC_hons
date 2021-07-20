@@ -7,7 +7,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 library(tidyverse)
 library(here)
 library(janitor)
@@ -161,15 +161,12 @@ att_ex$response_id
 ```
 
 
-# apply that code to the all ratings df
-
 Switching to ifelse because I couldnt work out how to stop it from turning ALL the values in the col to NA. ifelse works like if responseID == the bad guy, turn it to NA, otherwise put value from att_overall1
 ```{r}
 all_ratings <- all_ratings %>%
   mutate(attitude_overall_1 = ifelse(response_id == "R_1F2IfmtZ4IB7wDR", NA, attitude_overall_1)) %>%
   mutate(attitude_analyses_1 = ifelse(response_id == "R_1F2IfmtZ4IB7wDR", NA, attitude_analyses_1)) 
   
-
 # check that problem is fixed
 
 all_ratings %>%
@@ -179,14 +176,7 @@ all_ratings %>%
 
 ```
 
-TO DO NEXT
-
-Working in 2_cleanStudy1_qualtricsdata.Rmd
-A. exclusions
-1.  are there any participants who have too many missing answers from attitude/intention?
-DONE
-
-NEXT calculate row means.... 
+# NEXT calculate row means.... 
 
 ```{r}
 

@@ -9,19 +9,30 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+# load packages
 ```{r}
 library(tidyverse)
 library(here)
+library(gt)
 
 ```
 
-
-```{r}
+# read data
+```{r message=FALSE, warning=FALSE}
 clean_data <- read_csv(here("data", "dateStudy1data_clean.csv"))
+
+clean_data <- clean_data %>%
+  mutate(group = factor(group, 
+                        levels = c(1, 2),
+                        labels = c("gain", "loss")))
+
+
 ```
 
 Categorical variable: group
 Continuous variable: perception_1, mean_att, mean_int
+
+# manipulation check
 
 Mean ratings for gain and loss manipulation check by group
 
@@ -38,7 +49,16 @@ summary_manipcheck <- clean_data %>%
             lfN = n(), 
             lfStdErr =  lfSD/sqrt(lfN))
 
-  print(summary_manipcheck)
+
+
+print(summary_manipcheck)
+  
+  # the gt() package will give you nicely formatted tables in your knitted documnet, you can also control digits displayed with fmt_number
+  
+    summary_manipcheck %>% 
+      gt() %>%
+    fmt_number(columns = c("gf_M", "gfSD", "gfStdErr", "lf_M", "lfSD", "lfStdErr"), 
+               decimals = 4)
 
 ```
 
@@ -126,3 +146,49 @@ summary_data %>%
   write_csv(here("data", "summary_data.csv" ))
 
 ```
+
+
+# TIPS FROM JENNY
+
+I wonder whether there is a way to get these summary stats using less repetitive code. I think if we make the data into LONG format, we can get them using group_by and summarise all in one go (rather writing code for perception, attitude and intention separately)
+
+Lets rename the columns first...
+
+```{r}
+clean_data <- clean_data %>%
+  rename(perception = perception_1, attitude = mean_att, intention = mean_int, gainmanipulation = manipulation_check_gf_1, lossmanipulation = manipulation_check_lf_1)
+
+names(clean_data)
+```
+
+Then make the dataframe long, using pivot longer...
+
+```{r}
+clean_data_long <- clean_data %>%
+  pivot_longer(names_to = "question", values_to = "rating", perception:lossmanipulation)
+```
+
+Then do summary stats, manipulation check first...
+
+```{r}
+manipcheck <- clean_data_long %>%
+  filter(question %in% c("gainmanipulation", "lossmanipulation")) %>%
+  group_by(group, question) %>%
+  summarise(mean = mean(rating, na.rm = TRUE),
+            SD = sd(rating, na.rm = TRUE), 
+            N = n(), 
+            StdErr = SD/sqrt(N)) 
+
+manipcheck %>%
+  gt() %>%
+  fmt_number(columns = c("mean", "SD", "StdErr"), 
+               decimals = 4)
+```
+
+Now do the same for perception, attitude, intention....
+
+
+```{r}
+
+```
+
