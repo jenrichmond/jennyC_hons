@@ -108,8 +108,10 @@ intention <- important_data %>%
    mutate(int_exclude = case_when(int_missed <= 2 ~ 'Include',
                                TRUE ~ 'Exclude'))
 
+manipcheck <- important_data %>%
+  select(manipulation_check_gf_1, manipulation_check_lf_1)
 
-all_ratings <- cbind(perception, attitude, intention) %>%
+all_ratings <- cbind(perception, attitude, intention, manipcheck) %>%
   select(-6, -14) %>% # drop extra id columns
  relocate(per_missed, .before = int_missed) %>%
    relocate(att_missed, .before = int_missed) %>%
@@ -191,7 +193,7 @@ NEXT calculate row means....
 mean_ratings <- all_ratings %>%
   mutate(mean_att = rowMeans(.[4:8], na.rm=TRUE)) %>%
   mutate(mean_int = rowMeans(.[9:12], na.rm=TRUE)) %>%
-  select (response_id, group, perception_1, mean_att, mean_int)
+  select (response_id, group, perception_1, mean_att, mean_int, manipulation_check_gf_1, manipulation_check_lf_1)
 
 ```
 
