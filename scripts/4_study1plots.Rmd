@@ -51,6 +51,12 @@ summary_data %>%
   labs(title = "To what extent did the information stress the positive benefits of adopting open science practices?")
 
 ```
+> JR: things to work out how to fix in this plot...
+1. how to make the bars sit on the x axis
+2. how to make bars less wide
+3. add more descriptive x and y axis labels
+4. wrap title so it will fit
+
 
 Geom jitter plot:
 
@@ -70,6 +76,14 @@ clean_data %>%
   labs(title = "To what extent did the information stress the positive benefits of adopting open science practices?")
 
 ```
+
+> JR: things to work out how to fix in this plot...
+1. how to make the group not be 1.0, 1.5, 2.0 (ideally you want this to say gain loss)
+2. how to make jitter more constrained
+3. add more descriptive x and y axis labels
+4. wrap title so it will fit
+
+
 
 #Mean ratings for loss manipulation check by group
 
@@ -94,6 +108,11 @@ summary_data %>%
 
 ```
 
+> JR: things to work out how to fix in this plot...
+1. this one doesn't work, only gives 1 bar?? shoudl look like gain bar plot above
+2. maybe it makes sense to put both gain and loss manipulation check on a single plot, can yu do that with facet_wrap()?
+
+
 Geom jitter plot:
 
 ```{r}
@@ -113,12 +132,17 @@ clean_data %>%
 
 ```
 
+> JR: things to work out how to fix in this plot...
+1. how to make jitter more constrained
+2. add more descriptive x and y axis labels
+3. wrap title so it will fit
+
 #Mean ratings for perception by group
 
 Column graph:
 
 ```{r}
-
+# note you shouldn't have to do this everytime, once you convert group to factor with labels in the summary dataframe, and use assignment <- to apply the change to the dataframe it will stick
 summary_data <- summary_data %>%
   mutate(group = factor(group, 
                         levels = c(1, 2),
@@ -135,6 +159,12 @@ summary_data %>%
   labs(title = "Mean perception ratings by group")
 
 ```
+
+> JR: things to work out how to fix in this plot...
+1. this one doesn't work, only gives 1 bar?? 
+2. more descriptive x and y axis labels
+3. bar sits on x axis
+
 
 Geom jitter plot:
 
@@ -154,6 +184,13 @@ clean_data %>%
   labs(title = "Mean perception ratings by group")
 
 ```
+
+> JR: things to work out how to fix in this plot...
+1. more constrained jitter
+2. more descriptive x and y axis labels
+3. more accurate title, this isn't means
+
+
 
 #Mean ratings for attitude by group
 
@@ -177,6 +214,11 @@ summary_data %>%
   labs(title = "Mean attitude ratings by group")
 
 ```
+> JR: things to work out how to fix in this plot...
+1. this one doesn't work, only gives 1 bar?? 
+2. more descriptive x and y axis labels
+3. bars sits on x axis
+
 
 Geom jitter plot:
 
