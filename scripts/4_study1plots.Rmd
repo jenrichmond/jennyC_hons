@@ -27,7 +27,10 @@ summary_data <- read_csv(here("data", "summary_data.csv"))
 ```
 
 ```{r}
+
+manipcheck <- read_csv(here("data", "manipcheck.csv"))
 per_att_int <- read_csv(here("data", "per_att_int.csv"))
+
 ```
 
 Categorical variable: group
@@ -39,10 +42,9 @@ Column graph:
 
 ```{r}
 
-manipcheck <- manipcheck %>%
-  mutate(group = factor(group, 
-                        levels = c(1, 2),
-                        labels = c("gain", "loss")))
+manipcheck %>%
+  filter(question %in% c("gainmanipulation")) %>%
+  group_by(group, question)
 
 manipcheck %>%
     ggplot(aes(x = group, y = mean)) +
@@ -67,7 +69,7 @@ Geom jitter plot:
 
 ```{r}
 
-clean_data <- clean_data %>%
+clean_data %>%
   mutate(group = factor(group, 
                         levels = c(1, 2),
                         labels = c("gain", "loss")))
@@ -76,9 +78,10 @@ clean_data %>%
   group_by(group) %>%
   ggplot(aes(x = group, y = manipulation_check_gf_1)) +
   geom_jitter() +
-  scale_y_continuous(limits = c(0,5)) +
+  scale_y_continuous(expand = c(0,0),
+                     limits = c(0,5)) +
   theme_classic() +
-  labs(title = "To what extent did the information stress the positive benefits of adopting open science practices?")
+  labs(title = "To what extent did the information stress the positive benefits of \nadopting open science practices?")
 
 ```
 
@@ -96,20 +99,20 @@ Column graph:
 
 ```{r}
 
-manipcheck <- manipcheck %>%
-  mutate(group = factor(group, 
-                        levels = c(1, 2),
-                        labels = c("gain", "loss")))
+manipcheck %>%
+  filter(question %in% c("lossmanipulation")) %>%
+  group_by(group, question)
 
 manipcheck %>%
-  ggplot(aes(x = group, y = mean)) +
-  geom_col() +
-  scale_y_continuous(limits = c(0,5)) +
-  geom_errorbar(aes(ymin=mean - StdErr, ymax=mean + StdErr),
-                size=.3, 
-                width=.2) +
+    ggplot(aes(x = group, y = mean)) +
+    geom_col() +
+    scale_y_continuous(expand = c(0,0),
+                       limits = c(0,5)) +
+    geom_errorbar(aes(ymin=mean-StdErr, ymax=mean+StdErr),
+                  size=.3, 
+                  width=.2) +
   theme_classic() +
-  labs(title = "To what extent did the information stress the negative consequences of not adopting open science practices?")
+  labs(title = "To what extent did the information stress the negative consequences of \nnot adopting open science practices?")
 
 ```
 
@@ -122,7 +125,7 @@ Geom jitter plot:
 
 ```{r}
 
-clean_data <- clean_data %>%
+clean_data %>%
   mutate(group = factor(group, 
                         levels = c(1, 2),
                         labels = c("gain", "loss")))
@@ -133,7 +136,7 @@ clean_data %>%
   geom_jitter() +
   scale_y_continuous(limits = c(0,5)) +
   theme_classic() +
-  labs(title = "To what extent did the information stress the negative consequences of not adopting open science practices?")
+  labs(title = "To what extent did the information stress the negative consequences of \nnot adopting open science practices?")
 
 ```
 
@@ -142,6 +145,26 @@ clean_data %>%
 2. add more descriptive x and y axis labels
 3. wrap title so it will fit
 
+#Mean ratings for gain and loss manipulation check by group
+
+Facet_wrap()
+
+```{r}
+
+manipcheck %>%
+    ggplot(data = mean, aes(x = group)) +
+    geom_col() +
+    scale_y_continuous(expand = c(0,0),
+                       limits = c(0,5)) +
+    geom_errorbar(aes(ymin=mean-StdErr, ymax=mean+StdErr),
+                  size=.3, 
+                  width=.2) +
+    theme_classic() +
+    facet_wrap(~ gain + loss) 
+
+```
+
+
 #Mean ratings for perception by group
 
 Column graph:
@@ -149,7 +172,7 @@ Column graph:
 ```{r}
 # note you shouldn't have to do this everytime, once you convert group to factor with labels in the summary dataframe, and use assignment <- to apply the change to the dataframe it will stick
 
-per_att_int <- per_att_int %>%
+per_att_int %>%
   filter(question %in% c("perception")) %>%
   group_by(group, question)
 
@@ -176,7 +199,7 @@ Geom jitter plot:
 
 ```{r}
 
-clean_data <- clean_data %>%
+clean_data %>%
   mutate(group = factor(group,
                         levels = c(1, 2),
                         labels = c("gain", "loss")))
@@ -188,7 +211,7 @@ clean_data %>%
   scale_y_continuous(expand = c(0,0),
                      limits = c(0,5)) +
   theme_classic() +
-  labs(title = "Mean perception ratings by group")
+  labs(title = "Perception ratings by group")
 
 ```
 
@@ -197,15 +220,13 @@ clean_data %>%
 2. more descriptive x and y axis labels
 3. more accurate title, this isn't means
 
-
-
 #Mean ratings for attitude by group
 
 Column graph:
 
 ```{r}
 
-per_att_int <- per_att_int %>%
+per_att_int %>%
   filter(question %in% c("attitude")) %>%
   group_by(group, question)
 
@@ -226,12 +247,11 @@ per_att_int %>%
 2. more descriptive x and y axis labels
 3. bars sits on x axis
 
-
 Geom jitter plot:
 
 ```{r}
 
-clean_data <- clean_data %>%
+clean_data %>%
   mutate(group = factor(group, 
                         levels = c(1, 2),
                         labels = c("gain", "loss")))
@@ -243,7 +263,7 @@ clean_data %>%
   scale_y_continuous(expand = c(0,0),
                      limits = c(0,5)) +
   theme_classic() +
-  labs(title = "Mean attitude ratings by group")
+  labs(title = "Attitude ratings by group")
 
 ```
 
@@ -253,7 +273,7 @@ Column graph:
 
 ```{r}
 
-per_att_int <- per_att_int %>%
+per_att_int %>%
   filter(question %in% c("intention")) %>%
   group_by(group, question)
 
@@ -274,7 +294,7 @@ Geom jitter plot:
 
 ```{r}
 
-clean_data <- clean_data %>%
+clean_data %>%
   mutate(group = factor(group, 
                         levels = c(1, 2),
                         labels = c("gain", "loss")))
@@ -286,6 +306,6 @@ clean_data %>%
   scale_y_continuous(expand = c(0,0),
                      limits = c(0,5)) +
   theme_classic() +
-  labs(title = "Mean attitude ratings by group")
+  labs(title = "Intention ratings by group")
 
 ```
