@@ -55,7 +55,7 @@ manipcheck %>%
                   size=.3, 
                   width=.2) +
   theme_classic() +
-  labs(title = "To what extent did the information stress the positive benefits of \nadopting open science practices?")
+  labs(title = "To what extent did the information stress the positive benefits of \nadopting open science practices?", x="Condition", y="Mean ratings of gain manipulation")
 
 ```
 > JR: things to work out how to fix in this plot...
@@ -81,7 +81,7 @@ clean_data %>%
   scale_y_continuous(expand = c(0,0),
                      limits = c(0,5)) +
   theme_classic() +
-  labs(title = "To what extent did the information stress the positive benefits of \nadopting open science practices?")
+  labs(title = "To what extent did the information stress the positive benefits of \nadopting open science practices?", x="Condition", y="Mean ratings of gain manipulation")
 
 ```
 
@@ -112,7 +112,7 @@ manipcheck %>%
                   size=.3, 
                   width=.2) +
   theme_classic() +
-  labs(title = "To what extent did the information stress the negative consequences of \nnot adopting open science practices?")
+  labs(title = "To what extent did the information stress the negative consequences of \nnot adopting open science practices?", x="Condition", y="Mean ratings of loss manipulation")
 
 ```
 
@@ -136,7 +136,7 @@ clean_data %>%
   geom_jitter() +
   scale_y_continuous(limits = c(0,5)) +
   theme_classic() +
-  labs(title = "To what extent did the information stress the negative consequences of \nnot adopting open science practices?")
+  labs(title = "To what extent did the information stress the negative consequences of \nnot adopting open science practices?", x="Condition", y="Mean ratings of loss manipulation")
 
 ```
 
@@ -147,21 +147,23 @@ clean_data %>%
 
 #Mean ratings for gain and loss manipulation check by group
 
-Facet_wrap()
+#Facet_wrap()
 
 ```{r}
 
 manipcheck %>%
-    ggplot(data = mean, aes(x = group)) +
-    geom_col() +
+    ggplot(aes(x = group, y = mean)) +
+    geom_col(position = "dodge") +
     scale_y_continuous(expand = c(0,0),
                        limits = c(0,5)) +
-    geom_errorbar(aes(ymin=mean-StdErr, ymax=mean+StdErr),
-                  size=.3, 
-                  width=.2) +
     theme_classic() +
-    facet_wrap(~ gain + loss) 
-
+    facet_wrap(~ question) +
+    geom_errorbar(aes(ymin=mean-StdErr, ymax=mean+StdErr),
+                  size=.3,
+                  width=.2,
+                  position=position_dodge(.9)) +
+     labs(x="Type of information manipulation", y="Mean ratings of information")
+                  
 ```
 
 
@@ -185,7 +187,7 @@ per_att_int %>%
                 size=.3, 
                 width=.2) +
   theme_classic() +
-  labs(title = "Mean perception ratings by group")
+  labs(x="Condition", y="Mean ratings of perception")
 
 ```
 
@@ -211,7 +213,7 @@ clean_data %>%
   scale_y_continuous(expand = c(0,0),
                      limits = c(0,5)) +
   theme_classic() +
-  labs(title = "Perception ratings by group")
+  labs(x="Condition", y="Mean ratings of perception")
 
 ```
 
@@ -239,7 +241,7 @@ per_att_int %>%
                 size=.3, 
                 width=.2) +
   theme_classic() +
-  labs(title = "Mean attitude ratings by group")
+  labs(x="Condition", y="Mean ratings of attitude")
 
 ```
 > JR: things to work out how to fix in this plot...
@@ -263,7 +265,7 @@ clean_data %>%
   scale_y_continuous(expand = c(0,0),
                      limits = c(0,5)) +
   theme_classic() +
-  labs(title = "Attitude ratings by group")
+  labs(x="Condition", y="Mean ratings of attitude")
 
 ```
 
@@ -286,7 +288,7 @@ per_att_int %>%
                 size=.3, 
                 width=.2) +
   theme_classic() +
-  labs(title = "Mean intention ratings by group")
+  labs(x="Condition", y="Mean ratings of intention")
 
 ```
 
@@ -306,6 +308,26 @@ clean_data %>%
   scale_y_continuous(expand = c(0,0),
                      limits = c(0,5)) +
   theme_classic() +
-  labs(title = "Intention ratings by group")
+  labs(x="Condition", y="Mean ratings of intention")
 
+```
+#Mean ratings for perception, attitude, and intention by group
+
+#Facet_wrap()
+
+```{r}
+
+per_att_int %>%
+    ggplot(aes(x = group, y = mean)) +
+    geom_col(position = "dodge") +
+    scale_y_continuous(expand = c(0,0),
+                       limits = c(0,5)) +
+    theme_classic() +
+    facet_wrap(~ question) +
+    geom_errorbar(aes(ymin=mean-StdErr, ymax=mean+StdErr),
+                  size=.3,
+                  width=.2,
+                  position=position_dodge(.9)) +
+     labs(x="Condition", y="Mean ratings")
+                  
 ```
