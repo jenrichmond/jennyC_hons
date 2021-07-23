@@ -26,7 +26,6 @@ clean_data <- clean_data %>%
                         levels = c(1, 2),
                         labels = c("gain", "loss")))
 
-
 ```
 
 Categorical variable: group
@@ -48,8 +47,6 @@ summary_manipcheck <- clean_data %>%
             lfSD = sd(manipulation_check_lf_1, na.rm = TRUE), 
             lfN = n(), 
             lfStdErr =  lfSD/sqrt(lfN))
-
-
 
 print(summary_manipcheck)
   
@@ -187,8 +184,19 @@ manipcheck %>%
 
 Now do the same for perception, attitude, intention....
 
-
 ```{r}
 
-```
+per_att_int <- clean_data_long %>%
+  filter(question %in% c("perception", "attitude", "intention")) %>%
+  group_by(group, question) %>%
+  summarise(mean = mean(rating, na.rm = TRUE),
+            SD = sd(rating, na.rm = TRUE), 
+            N = n(), 
+            StdErr = SD/sqrt(N)) 
 
+per_att_int %>%
+  gt() %>%
+  fmt_number(columns = c("mean", "SD", "StdErr"), 
+               decimals = 4)
+
+```
