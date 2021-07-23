@@ -26,6 +26,10 @@ summary_data <- read_csv(here("data", "summary_data.csv"))
 
 ```
 
+```{r}
+per_att_int <- read_csv(here("data", "per_att_int.csv"))
+```
+
 Categorical variable: group
 Continuous variable: perception_1, mean_att, mean_int
 
@@ -144,16 +148,17 @@ Column graph:
 
 ```{r}
 # note you shouldn't have to do this everytime, once you convert group to factor with labels in the summary dataframe, and use assignment <- to apply the change to the dataframe it will stick
-summary_data <- summary_data %>%
-  mutate(group = factor(group, 
-                        levels = c(1, 2),
-                        labels = c("gain", "loss")))
 
-summary_data %>%
-  ggplot(aes(x = group, y = per_M,)) +
+per_att_int <- per_att_int %>%
+  filter(question %in% c("perception")) %>%
+  group_by(group, question)
+
+per_att_int %>%
+  ggplot(aes(x = group, y = mean)) +
   geom_col() +
-  scale_y_continuous(limits = c(0,5)) +
-  geom_errorbar(aes(ymin=per_M-perStdErr, ymax=per_M+perStdErr),
+  scale_y_continuous(expand = c(0,0),
+                     limits = c(0,5)) +
+  geom_errorbar(aes(ymin=mean-StdErr, ymax=mean+StdErr),
                 size=.3, 
                 width=.2) +
   theme_classic() +
@@ -172,7 +177,7 @@ Geom jitter plot:
 ```{r}
 
 clean_data <- clean_data %>%
-  mutate(group = factor(group, 
+  mutate(group = factor(group,
                         levels = c(1, 2),
                         labels = c("gain", "loss")))
 
@@ -180,7 +185,8 @@ clean_data %>%
   group_by(group) %>%
   ggplot(aes(x = group, y = perception_1)) +
   geom_jitter() +
-  scale_y_continuous(limits = c(0,5)) +
+  scale_y_continuous(expand = c(0,0),
+                     limits = c(0,5)) +
   theme_classic() +
   labs(title = "Mean perception ratings by group")
 
@@ -199,16 +205,16 @@ Column graph:
 
 ```{r}
 
-summary_data <- summary_data %>%
-  mutate(group = factor(group, 
-                        levels = c(1, 2),
-                        labels = c("gain", "loss")))
+per_att_int <- per_att_int %>%
+  filter(question %in% c("attitude")) %>%
+  group_by(group, question)
 
-summary_data %>%
-  ggplot(aes(x = group, y = att_M)) +
+per_att_int %>%
+  ggplot(aes(x = group, y = mean)) +
   geom_col() +
-  scale_y_continuous(limits = c(0,5)) +
-  geom_errorbar(aes(ymin=att_M-attStdErr, ymax=att_M+attStdErr),
+  scale_y_continuous(expand = c(0,0),
+                     limits = c(0,5)) +
+  geom_errorbar(aes(ymin=mean-StdErr, ymax=mean+StdErr),
                 size=.3, 
                 width=.2) +
   theme_classic() +
@@ -234,7 +240,8 @@ clean_data %>%
   group_by(group) %>%
   ggplot(aes(x = group, y = mean_att)) +
   geom_jitter() +
-  scale_y_continuous(limits = c(0,5)) +
+  scale_y_continuous(expand = c(0,0),
+                     limits = c(0,5)) +
   theme_classic() +
   labs(title = "Mean attitude ratings by group")
 
@@ -247,16 +254,15 @@ Column graph:
 ```{r}
 
 per_att_int <- per_att_int %>%
-  mutate(group = factor(group, 
-                        levels = c(1, 2),
-                        labels = c("gain", "loss")))
+  filter(question %in% c("intention")) %>%
+  group_by(group, question)
 
 per_att_int %>%
-  ggplot(aes(x = group, y = int_M)) +
+  ggplot(aes(x = group, y = mean)) +
   geom_col() +
   scale_y_continuous(expand = c(0,0),
                      limits = c(0,5)) +
-  geom_errorbar(aes(ymin=int_M-intStdErr, ymax=int_M+intStdErr),
+  geom_errorbar(aes(ymin=mean-StdErr, ymax=mean+StdErr),
                 size=.3, 
                 width=.2) +
   theme_classic() +
@@ -277,7 +283,8 @@ clean_data %>%
   group_by(group) %>%
   ggplot(aes(x = group, y = mean_int)) +
   geom_jitter() +
-  scale_y_continuous(limits = c(0,5)) +
+  scale_y_continuous(expand = c(0,0),
+                     limits = c(0,5)) +
   theme_classic() +
   labs(title = "Mean attitude ratings by group")
 

@@ -203,6 +203,9 @@ per_att_int %>%
 
 ```{r}
 
+manipcheck %>%
+  write_csv(here("data", "manipcheck.csv" ))
+
 per_att_int %>%
   write_csv(here("data", "per_att_int.csv" ))
 
