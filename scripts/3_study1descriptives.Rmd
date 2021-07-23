@@ -200,3 +200,10 @@ per_att_int %>%
                decimals = 4)
 
 ```
+
+```{r}
+
+per_att_int %>%
+  write_csv(here("data", "per_att_int.csv" ))
+
+```

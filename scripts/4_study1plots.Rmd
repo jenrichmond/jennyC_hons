@@ -35,20 +35,21 @@ Column graph:
 
 ```{r}
 
-summary_data <- summary_data %>%
+manipcheck <- manipcheck %>%
   mutate(group = factor(group, 
                         levels = c(1, 2),
                         labels = c("gain", "loss")))
 
-summary_data %>%
-    ggplot(aes(x = group, y = gf_M)) +
+manipcheck %>%
+    ggplot(aes(x = group, y = mean)) +
     geom_col() +
-    scale_y_continuous(limits = c(0,5)) +
-    geom_errorbar(aes(ymin=gf_M-gfStdErr, ymax=gf_M+gfStdErr),
+    scale_y_continuous(expand = c(0,0),
+                       limits = c(0,5)) +
+    geom_errorbar(aes(ymin=mean-StdErr, ymax=mean+StdErr),
                   size=.3, 
                   width=.2) +
   theme_classic() +
-  labs(title = "To what extent did the information stress the positive benefits of adopting open science practices?")
+  labs(title = "To what extent did the information stress the positive benefits of \nadopting open science practices?")
 
 ```
 > JR: things to work out how to fix in this plot...
@@ -91,16 +92,16 @@ Column graph:
 
 ```{r}
 
-summary_data <- summary_data %>%
+manipcheck <- manipcheck %>%
   mutate(group = factor(group, 
                         levels = c(1, 2),
                         labels = c("gain", "loss")))
 
-summary_data %>%
-  ggplot(aes(x = group, y = lf_M)) +
+manipcheck %>%
+  ggplot(aes(x = group, y = mean)) +
   geom_col() +
   scale_y_continuous(limits = c(0,5)) +
-  geom_errorbar(aes(ymin=lf_M - lfStdErr, ymax=lf_M + lfStdErr),
+  geom_errorbar(aes(ymin=mean - StdErr, ymax=mean + StdErr),
                 size=.3, 
                 width=.2) +
   theme_classic() +
@@ -245,15 +246,16 @@ Column graph:
 
 ```{r}
 
-summary_data <- summary_data %>%
+per_att_int <- per_att_int %>%
   mutate(group = factor(group, 
                         levels = c(1, 2),
                         labels = c("gain", "loss")))
 
-summary_data %>%
+per_att_int %>%
   ggplot(aes(x = group, y = int_M)) +
   geom_col() +
-  scale_y_continuous(limits = c(0,5)) +
+  scale_y_continuous(expand = c(0,0),
+                     limits = c(0,5)) +
   geom_errorbar(aes(ymin=int_M-intStdErr, ymax=int_M+intStdErr),
                 size=.3, 
                 width=.2) +
