@@ -1,0 +1,23 @@
+---
+title: "README"
+author: "Jen Richmond"
+date: "24/07/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# data README
+
+Hi Jenny, 
+
+Time to have a bit of a clean up in the data folder, which of these files are essential to your analysis and which can you delete? 
+
+I'm noticing that you have lots of dated versions of your data from qualtrics. That is because the script saves a new dated verison of it every time you run the 1_getStudy 1  script. You probably don't need all of them- delete all but the one that reads into the next step of the analysis pipeline. 
+
+Once you have deleted all the files you don't need, use this document to make notes that remind your future self (or tell other data users) what is in the data folder of the project and how it got to be there. 
+
+List each remaining file below with a description of what the data is (i.e. manipcheck is dataframe of summary stats for manipulation check questions) and where it came from (i.e. output from 3_study1_descriptives.Rmd) 
+
