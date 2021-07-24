@@ -9,14 +9,18 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+# load packages
+ 
 ```{r}
 library(tidyverse)
 library(here)
 library(ggeasy)
+
 ```
 
+# read data
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 clean_data <- read_csv(here("data", "dateStudy1data_clean.csv"))
 ```
 
@@ -24,14 +28,13 @@ clean_data <- read_csv(here("data", "dateStudy1data_clean.csv"))
 
 summary_data <- read_csv(here("data", "summary_data.csv"))
 
-```
-
-```{r}
-
 manipcheck <- read_csv(here("data", "manipcheck.csv"))
+
 per_att_int <- read_csv(here("data", "per_att_int.csv"))
 
 ```
+
+
 
 Categorical variable: group
 Continuous variable: perception_1, mean_att, mean_int
@@ -40,11 +43,18 @@ Continuous variable: perception_1, mean_att, mean_int
 
 Column graph:
 
+> in the first bit of code here, are you trying to filter for just the gain manipulation questions?? You need to assign the output of that to a new object, that you then use for your plot. otherwise the chunk below, will use the original unchanged manipcheck dataframe- I think that is why you have two sets of error bars 
+
 ```{r}
 
 manipcheck %>%
   filter(question %in% c("gainmanipulation")) %>%
   group_by(group, question)
+
+```
+
+
+```{r}
 
 manipcheck %>%
     ggplot(aes(x = group, y = mean)) +
@@ -58,21 +68,33 @@ manipcheck %>%
   labs(title = "To what extent did the information stress the positive benefits of \nadopting open science practices?", x="Condition", y="Mean ratings of gain manipulation")
 
 ```
+
 > JR: things to work out how to fix in this plot...
-1. how to make the bars sit on the x axis
-2. how to make bars less wide
-3. add more descriptive x and y axis labels
-4. wrap title so it will fit
+1. how to make the bars sit on the x axis - DONE
+2. how to make bars less wide ---- can you make them skinnier, and maybe differentiate the bars by colour??
+3. add more descriptive x and y axis labels - DONE
+4. wrap title so it will fit - DONE
+5. something is wrong with the error bars, you have two sets here- fix this up
+6. 
 
 
 Geom jitter plot:
 
+> same issue here, when you pipe clean_data into your mutate, but don't assign the output to a new object, it will run the code, but not save the changes. If you want to make permanent changes to the df you need to use the assignment <- to save the changes so that they will be applied when you use the df in your plot
+
 ```{r}
 
-clean_data %>%
+clean_data <- clean_data %>%
   mutate(group = factor(group, 
                         levels = c(1, 2),
                         labels = c("gain", "loss")))
+
+```
+
+> JR up to here... I think you need to be a little self reflective about how happy you are with how the plots look. And if I make a suggestion (like making the bars narrower, or the jitter more constrained) it is because I think you should do it. When you tell me that you have pushed it back, i take that to mean that you are happy with it. The plot below has lots of points cut in half??
+
+
+```{r}
 
 clean_data %>%
   group_by(group) %>%

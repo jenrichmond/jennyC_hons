@@ -10,7 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # load packages
-```{r}
+```{r message=FALSE, warning=FALSE}
 library(tidyverse)
 library(here)
 library(gt)
@@ -153,7 +153,7 @@ Lets rename the columns first...
 
 ```{r}
 clean_data <- clean_data %>%
-  rename(perception = perception_1, attitude = mean_att, intention = mean_int, gainmanipulation = manipulation_check_gf_1, lossmanipulation = manipulation_check_lf_1)
+  rename(perception = perception_1, attitude = mean_att, intention = mean_int, positive_benefits = manipulation_check_gf_1, negative_conseq = manipulation_check_lf_1)
 
 names(clean_data)
 ```
@@ -162,14 +162,14 @@ Then make the dataframe long, using pivot longer...
 
 ```{r}
 clean_data_long <- clean_data %>%
-  pivot_longer(names_to = "question", values_to = "rating", perception:lossmanipulation)
+  pivot_longer(names_to = "question", values_to = "rating", perception:negative_conseq)
 ```
 
 Then do summary stats, manipulation check first...
 
 ```{r}
 manipcheck <- clean_data_long %>%
-  filter(question %in% c("gainmanipulation", "lossmanipulation")) %>%
+  filter(question %in% c("positive_benefits", "negative_conseq")) %>%
   group_by(group, question) %>%
   summarise(mean = mean(rating, na.rm = TRUE),
             SD = sd(rating, na.rm = TRUE), 
