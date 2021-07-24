@@ -11,7 +11,6 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # data README
 
-Hi Jenny, 
 
 Time to have a bit of a clean up in the data folder, which of these files are essential to your analysis and which can you delete? 
 
