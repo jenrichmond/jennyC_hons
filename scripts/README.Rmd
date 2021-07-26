@@ -12,3 +12,73 @@ knitr::opts_chunk$set(echo = TRUE)
 # scripts README
 
 Now that your analysis is done, you should use this document to make notes that remind your future self (or tell other data users) what the "pipeline" is. Make a list outlining what each of scripts does, what file it reads in, and which files it writes out. 
+
+
+List of R Markdown scripts created using RStudio:
+  1. 1_getStudy1dataQualtrics.Rmd
+  2. 2_cleanStudy1_Qualtricsdata.Rmd
+  3. 3_study1descriptives.Rmd
+  4. 4_study1plots.Rmd
+  5. 5_study1stats.Rmd
+
+
+1. 1_getStudy1dataQualtrics.Rmd
+---------------------
+
+This script uses libraries: qualtRics, tidyverse, janitor, and here.
+
+The qualtRics package reads data directly from the Qualtrics survey data set into RStudio via the Application Programming Interface (API), and writes the data set into a csv. file in the "data" folder, called "_Study1data.csv".
+
+The script also pulls out identifiable details (name, address, email address, and consent) for individuals who report wanting to hear about the study's results. Identifiable details is written into a csv. file in the "data" folder, called "people_who_want_results.csv".
+> JC: This shouldn't be included right? If it might be read by other people?
+
+
+2. 2_cleanStudy1_Qualtricsdata.Rmd
+---------------------
+
+This script uses libraries: tidyverse, janitor, and here.
+
+The script reads in the Qualtrics survey data set into RStudio via the csv. file ("_Study1data.csv") formed in "1_getStudy1dataQualtrics.Rmd".
+
+A dataframe is created with only important variables: end date, progress, response id, group, gender, age in years, faculty of study, previous research experience, attention checks, perception ratings, attitude ratings, intention ratings, and manipulation checks.
+
+Participants who do not complete the full survey, do not pass the attention check, or are missing perception, attitude, intention, or manipulation check ratings, have their responses either fully or partially filtered out, as specified by the study's pre-registration.
+
+Row means are calculated to find the average attitude and intention ratings for each participant.
+
+A clean data set (containing response id, group, perception ratings, attitude ratings, intention ratings, and manipulation check ratings) is written into a csv. file in the "data" folder, called "dateStudy1data_clean.csv".
+
+
+3. 3_study1descriptives.Rmd
+---------------------
+
+This script uses libraries: tidyverse, here, and gt.
+
+The script reads in a clean data set into RStudio via the csv. file ("dateStudy1data_clean.csv") created in "2_cleanStudy1_Qualtricsdata.Rmd".
+
+Means, standard deviations, number of participants, and standard errors for manipulation checks, perception, attitude, and intention ratings are calculated as a function of group (gain vs. loss).
+
+A summary data set (containing means, standard deviations, number of participants, and standard errors for manipulation check ratings) is written into a csv. file in the "data" folder, called "manipcheck.csv".
+
+Another summary data set (containing means, standard deviations, number of participants, and standard errors for perception, attitude, intention ratings) is written into a csv. file in the "data" folder, called "per_att_int.csv".
+
+
+4. 4_study1plots.Rmd
+---------------------
+
+This script uses libraries: tidyverse, here, and ggeasy.
+
+The script reads in a clean data set into RStudio via the csv. file ("dateStudy1data_clean.csv") created in "2_cleanStudy1_Qualtricsdata.Rmd", as well as summary data sets via the csv. files ("manipcheck.csv" and "per_att_int.csv) formed in "3_study1descriptives.Rmd".
+
+Column graphs and jitter plots are created for gain manipulation check, loss manipulation check, perception, attitude, and intention ratings.
+
+
+5. 5_study1stats.Rmd
+---------------------
+
+This script uses libraries: tidyverse, here, and jmv.
+
+The script reads in a clean data set into RStudio via the csv. file ("dateStudy1data_clean.csv") created in "2_cleanStudy1_Qualtricsdata.Rmd".
+
+Independent samples t-tests are used to compare gain manipulation check, loss manipulation check, perception, attitude, and intention ratings between gain and loss conditions.
+
