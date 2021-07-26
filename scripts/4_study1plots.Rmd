@@ -56,9 +56,13 @@ manipcheck %>%
 
 ```{r}
 
-manipcheck %>%
-    ggplot(aes(x = group, y = mean)) +
-    geom_col() +
+gainmanip <- manipcheck %>%
+  filter(question %in% c("gainmanipulation")) %>%
+  group_by(group)
+
+gainmanip %>%
+    ggplot(aes(x = group, y = mean, fill = group)) +
+    geom_col(width = 0.5, show.legend = FALSE) +
     scale_y_continuous(expand = c(0,0),
                        limits = c(0,5)) +
     geom_errorbar(aes(ymin=mean-StdErr, ymax=mean+StdErr),
@@ -87,7 +91,7 @@ Geom jitter plot:
 clean_data <- clean_data %>%
   mutate(group = factor(group, 
                         levels = c(1, 2),
-                        labels = c("gain", "loss")))
+                        labels = c("Gain", "Loss")))
 
 ```
 
@@ -98,10 +102,10 @@ clean_data <- clean_data %>%
 
 clean_data %>%
   group_by(group) %>%
-  ggplot(aes(x = group, y = manipulation_check_gf_1)) +
-  geom_jitter() +
+  ggplot(aes(x = group, y = manipulation_check_gf_1, colour = group)) +
+  geom_jitter(width = 0.3, show.legend = FALSE) +
   scale_y_continuous(expand = c(0,0),
-                     limits = c(0,5)) +
+                     limits = c(0,6)) +
   theme_classic() +
   labs(title = "To what extent did the information stress the positive benefits of \nadopting open science practices?", x="Condition", y="Mean ratings of gain manipulation")
 
@@ -121,13 +125,13 @@ Column graph:
 
 ```{r}
 
-manipcheck %>%
+lossmanip <- manipcheck %>%
   filter(question %in% c("lossmanipulation")) %>%
   group_by(group, question)
 
-manipcheck %>%
-    ggplot(aes(x = group, y = mean)) +
-    geom_col() +
+lossmanip %>%
+    ggplot(aes(x = group, y = mean, fill = group)) +
+    geom_col(width = 0.5, show.legend = FALSE) +
     scale_y_continuous(expand = c(0,0),
                        limits = c(0,5)) +
     geom_errorbar(aes(ymin=mean-StdErr, ymax=mean+StdErr),
@@ -150,13 +154,14 @@ Geom jitter plot:
 clean_data %>%
   mutate(group = factor(group, 
                         levels = c(1, 2),
-                        labels = c("gain", "loss")))
+                        labels = c("Gain", "Loss")))
 
 clean_data %>%
   group_by(group) %>%
-  ggplot(aes(x = group, y = manipulation_check_lf_1)) +
-  geom_jitter() +
-  scale_y_continuous(limits = c(0,5)) +
+  ggplot(aes(x = group, y = manipulation_check_lf_1, colour = group)) +
+  geom_jitter(width = 0.3, show.legend = FALSE) +
+  scale_y_continuous(expand = c(0,0),
+                     limits = c(0,6)) +
   theme_classic() +
   labs(title = "To what extent did the information stress the negative consequences of \nnot adopting open science practices?", x="Condition", y="Mean ratings of loss manipulation")
 
@@ -174,8 +179,8 @@ clean_data %>%
 ```{r}
 
 manipcheck %>%
-    ggplot(aes(x = group, y = mean)) +
-    geom_col(position = "dodge") +
+    ggplot(aes(x = group, y = mean, fill = group)) +
+    geom_col(width = 0.7, position = "dodge", show.legend = FALSE) +
     scale_y_continuous(expand = c(0,0),
                        limits = c(0,5)) +
     theme_classic() +
@@ -184,10 +189,10 @@ manipcheck %>%
                   size=.3,
                   width=.2,
                   position=position_dodge(.9)) +
-     labs(x="Type of information manipulation", y="Mean ratings of information")
-                  
-```
+     labs(x="Condition", y="Mean ratings of information")
 
+```
+> JC. Is there a way to rename "gain" to "Gain", "loss" to "Loss", "gainmanipulation" to "Gain Manipulation", and "lossmanipulation" to "Loss Manipulation"? I tried using the rename() function but can only seem to do it for variable names. I also tried levels(manipcheck$group) <- c("gain to Gain") but it didn't work. Would it be mutating the labels? i can't work out the exact function
 
 #Mean ratings for perception by group
 
@@ -196,13 +201,13 @@ Column graph:
 ```{r}
 # note you shouldn't have to do this everytime, once you convert group to factor with labels in the summary dataframe, and use assignment <- to apply the change to the dataframe it will stick
 
-per_att_int %>%
+per_plot <- per_att_int %>%
   filter(question %in% c("perception")) %>%
   group_by(group, question)
 
-per_att_int %>%
-  ggplot(aes(x = group, y = mean)) +
-  geom_col() +
+per_plot %>%
+  ggplot(aes(x = group, y = mean, fill = group)) +
+  geom_col(width = 0.5, show.legend = FALSE) +
   scale_y_continuous(expand = c(0,0),
                      limits = c(0,5)) +
   geom_errorbar(aes(ymin=mean-StdErr, ymax=mean+StdErr),
@@ -210,7 +215,7 @@ per_att_int %>%
                 width=.2) +
   theme_classic() +
   labs(x="Condition", y="Mean ratings of perception")
-
+  
 ```
 
 > JR: things to work out how to fix in this plot...
@@ -226,14 +231,14 @@ Geom jitter plot:
 clean_data %>%
   mutate(group = factor(group,
                         levels = c(1, 2),
-                        labels = c("gain", "loss")))
+                        labels = c("Gain", "Loss")))
 
 clean_data %>%
   group_by(group) %>%
-  ggplot(aes(x = group, y = perception_1)) +
-  geom_jitter() +
+  ggplot(aes(x = group, y = perception_1, colour = group)) +
+  geom_jitter(width = 0.3, show.legend = FALSE) +
   scale_y_continuous(expand = c(0,0),
-                     limits = c(0,5)) +
+                     limits = c(0,6)) +
   theme_classic() +
   labs(x="Condition", y="Mean ratings of perception")
 
@@ -250,13 +255,13 @@ Column graph:
 
 ```{r}
 
-per_att_int %>%
+att_plot <- per_att_int %>%
   filter(question %in% c("attitude")) %>%
   group_by(group, question)
 
-per_att_int %>%
-  ggplot(aes(x = group, y = mean)) +
-  geom_col() +
+att_plot %>%
+  ggplot(aes(x = group, y = mean, fill = group)) +
+  geom_col(width = 0.5, show.legend = FALSE) +
   scale_y_continuous(expand = c(0,0),
                      limits = c(0,5)) +
   geom_errorbar(aes(ymin=mean-StdErr, ymax=mean+StdErr),
@@ -278,14 +283,14 @@ Geom jitter plot:
 clean_data %>%
   mutate(group = factor(group, 
                         levels = c(1, 2),
-                        labels = c("gain", "loss")))
+                        labels = c("Gain", "Loss")))
 
 clean_data %>%
   group_by(group) %>%
-  ggplot(aes(x = group, y = mean_att)) +
-  geom_jitter() +
+  ggplot(aes(x = group, y = mean_att, colour = group)) +
+  geom_jitter(width = 0.3, show.legend = FALSE) +
   scale_y_continuous(expand = c(0,0),
-                     limits = c(0,5)) +
+                     limits = c(0,6)) +
   theme_classic() +
   labs(x="Condition", y="Mean ratings of attitude")
 
@@ -297,13 +302,13 @@ Column graph:
 
 ```{r}
 
-per_att_int %>%
+int_plot <- per_att_int %>%
   filter(question %in% c("intention")) %>%
   group_by(group, question)
 
-per_att_int %>%
-  ggplot(aes(x = group, y = mean)) +
-  geom_col() +
+int_plot %>%
+  ggplot(aes(x = group, y = mean, fill = group)) +
+  geom_col(width = 0.5, show.legend = FALSE) +
   scale_y_continuous(expand = c(0,0),
                      limits = c(0,5)) +
   geom_errorbar(aes(ymin=mean-StdErr, ymax=mean+StdErr),
@@ -321,14 +326,14 @@ Geom jitter plot:
 clean_data %>%
   mutate(group = factor(group, 
                         levels = c(1, 2),
-                        labels = c("gain", "loss")))
+                        labels = c("Gain", "Loss")))
 
 clean_data %>%
   group_by(group) %>%
-  ggplot(aes(x = group, y = mean_int)) +
-  geom_jitter() +
+  ggplot(aes(x = group, y = mean_int, colour = group)) +
+  geom_jitter(width = 0.3, show.legend = FALSE) +
   scale_y_continuous(expand = c(0,0),
-                     limits = c(0,5)) +
+                     limits = c(0,6)) +
   theme_classic() +
   labs(x="Condition", y="Mean ratings of intention")
 
@@ -340,8 +345,8 @@ clean_data %>%
 ```{r}
 
 per_att_int %>%
-    ggplot(aes(x = group, y = mean)) +
-    geom_col(position = "dodge") +
+    ggplot(aes(x = group, y = mean, fill = group)) +
+    geom_col(width = 0.7, position = "dodge", show.legend = FALSE) +
     scale_y_continuous(expand = c(0,0),
                        limits = c(0,5)) +
     theme_classic() +
@@ -351,5 +356,5 @@ per_att_int %>%
                   width=.2,
                   position=position_dodge(.9)) +
      labs(x="Condition", y="Mean ratings")
-                  
+
 ```
