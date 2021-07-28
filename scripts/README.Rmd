@@ -30,8 +30,9 @@ This script uses libraries: qualtRics, tidyverse, janitor, and here.
 The qualtRics package reads data directly from the Qualtrics survey data set into RStudio via the Application Programming Interface (API), and writes the data set into a csv. file in the "data" folder, called "_Study1data.csv".
 
 The script also pulls out identifiable details (name, address, email address, and consent) for individuals who report wanting to hear about the study's results. Identifiable details is written into a csv. file in the "data" folder, called "people_who_want_results.csv".
-> JC: This shouldn't be included right? If it might be read by other people?
 
+> JC: This shouldn't be included right? If it might be read by other people?
+> JR: yes, it is listed in the gitignore file so should be getting pushed to git
 
 2. 2_cleanStudy1_Qualtricsdata.Rmd
 ---------------------

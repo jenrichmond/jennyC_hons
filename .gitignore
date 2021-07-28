@@ -4,4 +4,4 @@
 .Ruserdata
 .DS_Store
 data/identifiable_details/people_who_want_results.csv
-scripts/cleanQualtricsdataJR.Rmd
+scripts/1_getStudy1dataQualtrics.Rmd

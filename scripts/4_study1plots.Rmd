@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # load packages
  
-```{r}
+```{r message=FALSE, warning=FALSE}
 library(tidyverse)
 library(here)
 library(ggeasy)
@@ -22,9 +22,7 @@ library(ggeasy)
 
 ```{r message=FALSE, warning=FALSE}
 clean_data <- read_csv(here("data", "dateStudy1data_clean.csv"))
-```
 
-```{r}
 
 summary_data <- read_csv(here("data", "summary_data.csv"))
 
@@ -43,22 +41,12 @@ Continuous variable: perception_1, mean_att, mean_int
 
 Column graph:
 
-> in the first bit of code here, are you trying to filter for just the gain manipulation questions?? You need to assign the output of that to a new object, that you then use for your plot. otherwise the chunk below, will use the original unchanged manipcheck dataframe- I think that is why you have two sets of error bars 
-
-```{r}
-
-manipcheck %>%
-  filter(question %in% c("gainmanipulation")) %>%
-  group_by(group, question)
-
-```
-
+> yup except when you want to match to 1 thing, you use == rather than %in%. If you want to match to any of the items in a list, use %in% c("thingone", "thingtwo"). The group_by here isn't necessary either. You only need that when you want to do a summarise right after. 
 
 ```{r}
 
 gainmanip <- manipcheck %>%
-  filter(question %in% c("gainmanipulation")) %>%
-  group_by(group)
+  filter(question == "gainmanipulation") 
 
 gainmanip %>%
     ggplot(aes(x = group, y = mean, fill = group)) +
@@ -73,18 +61,8 @@ gainmanip %>%
 
 ```
 
-> JR: things to work out how to fix in this plot...
-1. how to make the bars sit on the x axis - DONE
-2. how to make bars less wide ---- can you make them skinnier, and maybe differentiate the bars by colour??
-3. add more descriptive x and y axis labels - DONE
-4. wrap title so it will fit - DONE
-5. something is wrong with the error bars, you have two sets here- fix this up
-6. 
-
 
 Geom jitter plot:
-
-> same issue here, when you pipe clean_data into your mutate, but don't assign the output to a new object, it will run the code, but not save the changes. If you want to make permanent changes to the df you need to use the assignment <- to save the changes so that they will be applied when you use the df in your plot
 
 ```{r}
 
@@ -95,7 +73,6 @@ clean_data <- clean_data %>%
 
 ```
 
-> JR up to here... I think you need to be a little self reflective about how happy you are with how the plots look. And if I make a suggestion (like making the bars narrower, or the jitter more constrained) it is because I think you should do it. When you tell me that you have pushed it back, i take that to mean that you are happy with it. The plot below has lots of points cut in half??
 
 
 ```{r}
@@ -111,13 +88,6 @@ clean_data %>%
 
 ```
 
-> JR: things to work out how to fix in this plot...
-1. how to make the group not be 1.0, 1.5, 2.0 (ideally you want this to say gain loss)
-2. how to make jitter more constrained
-3. add more descriptive x and y axis labels
-4. wrap title so it will fit
-
-
 
 #Mean ratings for loss manipulation check by group
 
@@ -126,8 +96,7 @@ Column graph:
 ```{r}
 
 lossmanip <- manipcheck %>%
-  filter(question %in% c("lossmanipulation")) %>%
-  group_by(group, question)
+  filter(question == "lossmanipulation")
 
 lossmanip %>%
     ggplot(aes(x = group, y = mean, fill = group)) +
@@ -142,19 +111,21 @@ lossmanip %>%
 
 ```
 
-> JR: things to work out how to fix in this plot...
-1. this one doesn't work, only gives 1 bar?? shoudl look like gain bar plot above
-2. maybe it makes sense to put both gain and loss manipulation check on a single plot, can yu do that with facet_wrap()?
-
 
 Geom jitter plot:
 
+ > JR the factor() isnt necessary for the clean_data df because group is already a factor
+ 
 ```{r}
+glimpse(clean_data)
 
-clean_data %>%
-  mutate(group = factor(group, 
-                        levels = c(1, 2),
-                        labels = c("Gain", "Loss")))
+
+#clean_data %>%
+ # mutate(group = factor(group, 
+                       # levels = c(1, 2),
+                        #labels = c("Gain", "Loss"))) 
+
+
 
 clean_data %>%
   group_by(group) %>%
@@ -167,16 +138,17 @@ clean_data %>%
 
 ```
 
-> JR: things to work out how to fix in this plot...
-1. how to make jitter more constrained
-2. add more descriptive x and y axis labels
-3. wrap title so it will fit
 
-#Mean ratings for gain and loss manipulation check by group
+
+# Mean ratings for gain and loss manipulation check by group
 
 #Facet_wrap()
 
+
 ```{r}
+
+glimpse(manipcheck)
+
 
 manipcheck %>%
     ggplot(aes(x = group, y = mean, fill = group)) +
@@ -194,18 +166,23 @@ manipcheck %>%
 ```
 > JC. Is there a way to rename "gain" to "Gain", "loss" to "Loss", "gainmanipulation" to "Gain Manipulation", and "lossmanipulation" to "Loss Manipulation"? I tried using the rename() function but can only seem to do it for variable names. I also tried levels(manipcheck$group) <- c("gain to Gain") but it didn't work. Would it be mutating the labels? i can't work out the exact function
 
+> JR yes you want to check what kind of data R thinks each variable is using glimpse(). It is showing both group and question as characters, rather htan factors. You can use the same kind of code you were using above to convert 1 and 2 to gain loss to change the labels of both. Dont forget to use the <- to assign the output to the df, so that it sticks around. 
+
+clean_data <- clean_data %>%
+  mutate(group = factor(group, 
+                       # levels = c(1, 2),
+                        #labels = c("Gain", "Loss"))) 
+
 #Mean ratings for perception by group
 
 Column graph:
+> JR- note it might be simpler to filter straight into your ggplots code. Rather than creating a new df that is filtered, you can pipe from filter stragith into ggplot 
 
 ```{r}
-# note you shouldn't have to do this everytime, once you convert group to factor with labels in the summary dataframe, and use assignment <- to apply the change to the dataframe it will stick
 
-per_plot <- per_att_int %>%
-  filter(question %in% c("perception")) %>%
-  group_by(group, question)
 
-per_plot %>%
+per_att_int %>%
+  filter(question == "perception") %>%
   ggplot(aes(x = group, y = mean, fill = group)) +
   geom_col(width = 0.5, show.legend = FALSE) +
   scale_y_continuous(expand = c(0,0),
@@ -217,12 +194,6 @@ per_plot %>%
   labs(x="Condition", y="Mean ratings of perception")
   
 ```
-
-> JR: things to work out how to fix in this plot...
-1. this one doesn't work, only gives 1 bar?? 
-2. more descriptive x and y axis labels
-3. bar sits on x axis
-
 
 Geom jitter plot:
 
@@ -244,15 +215,13 @@ clean_data %>%
 
 ```
 
-> JR: things to work out how to fix in this plot...
-1. more constrained jitter
-2. more descriptive x and y axis labels
-3. more accurate title, this isn't means
 
 #Mean ratings for attitude by group
 
 Column graph:
-
+ > fix this one to use the same filter into ggplot method
+ 
+ 
 ```{r}
 
 att_plot <- per_att_int %>%
@@ -271,10 +240,6 @@ att_plot %>%
   labs(x="Condition", y="Mean ratings of attitude")
 
 ```
-> JR: things to work out how to fix in this plot...
-1. this one doesn't work, only gives 1 bar?? 
-2. more descriptive x and y axis labels
-3. bars sits on x axis
 
 Geom jitter plot:
 
@@ -299,6 +264,8 @@ clean_data %>%
 #Mean ratings for intention by group
 
 Column graph:
+
+ > fix this one to use the same filter into ggplot method
 
 ```{r}
 
