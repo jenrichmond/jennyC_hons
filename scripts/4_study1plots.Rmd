@@ -117,15 +117,8 @@ Geom jitter plot:
  > JR the factor() isnt necessary for the clean_data df because group is already a factor
  
 ```{r}
+
 glimpse(clean_data)
-
-
-#clean_data %>%
- # mutate(group = factor(group, 
-                       # levels = c(1, 2),
-                        #labels = c("Gain", "Loss"))) 
-
-
 
 clean_data %>%
   group_by(group) %>%
@@ -149,6 +142,10 @@ clean_data %>%
 
 glimpse(manipcheck)
 
+  manipcheck$group[manipcheck$group == "gain"] <- "Gain"
+  manipcheck$group[manipcheck$group == "loss"] <- "Loss"
+  manipcheck$question[manipcheck$question == "gainmanipulation"] <- "Gain-Framed Manipulation"
+  manipcheck$question[manipcheck$question == "lossmanipulation"] <- "Loss-Framed Manipulation"
 
 manipcheck %>%
     ggplot(aes(x = group, y = mean, fill = group)) +
@@ -179,7 +176,6 @@ Column graph:
 > JR- note it might be simpler to filter straight into your ggplots code. Rather than creating a new df that is filtered, you can pipe from filter stragith into ggplot 
 
 ```{r}
-
 
 per_att_int %>%
   filter(question == "perception") %>%
@@ -224,11 +220,8 @@ Column graph:
  
 ```{r}
 
-att_plot <- per_att_int %>%
-  filter(question %in% c("attitude")) %>%
-  group_by(group, question)
-
-att_plot %>%
+per_att_int %>%
+  filter(question == "attitude") %>%
   ggplot(aes(x = group, y = mean, fill = group)) +
   geom_col(width = 0.5, show.legend = FALSE) +
   scale_y_continuous(expand = c(0,0),
@@ -269,11 +262,8 @@ Column graph:
 
 ```{r}
 
-int_plot <- per_att_int %>%
-  filter(question %in% c("intention")) %>%
-  group_by(group, question)
-
-int_plot %>%
+per_att_int %>%
+  filter(question == "intention") %>%
   ggplot(aes(x = group, y = mean, fill = group)) +
   geom_col(width = 0.5, show.legend = FALSE) +
   scale_y_continuous(expand = c(0,0),
@@ -311,7 +301,19 @@ clean_data %>%
 
 ```{r}
 
-per_att_int %>%
+glimpse(per_att_int)
+
+  per_att_int$group[per_att_int$group == "gain"] <- "Gain"
+  per_att_int$group[per_att_int$group == "loss"] <- "Loss"
+  per_att_int$question[per_att_int$question == "perception"] <- "Perception"
+  per_att_int$question[per_att_int$question == "attitude"] <- "Attitude"
+  per_att_int$question[per_att_int$question == "intention"] <- "Intention"
+
+per_att_int_ordered <- per_att_int
+per_att_int_ordered$question <- factor(per_att_int_ordered$question,
+                         levels = c("Perception", "Attitude", "Intention"))
+
+per_att_int_ordered %>%
     ggplot(aes(x = group, y = mean, fill = group)) +
     geom_col(width = 0.7, position = "dodge", show.legend = FALSE) +
     scale_y_continuous(expand = c(0,0),
