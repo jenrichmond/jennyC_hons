@@ -1,5 +1,7 @@
 ---
-title: "Untitled"
+title: "Study 2 Plots"
+author: "Jenny Chen"
+date: "11/08/2021"
 output: html_document
 ---
 
@@ -7,22 +9,86 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+# Loading packages
+ 
+```{r message=FALSE, warning=FALSE}
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+library(tidyverse)
+library(here)
+library(ggeasy)
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
 ```
 
-## Including Plots
+# Reading in data
 
-You can also embed plots, for example:
+```{r message=FALSE, warning=FALSE}
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+clean_data <- read_csv(here("data", "dateStudy1data_clean.csv"))
+
+summary_data <- read_csv(here("data", "summary_data.csv"))
+
+manipcheck <- read_csv(here("data", "manipcheck.csv"))
+
+per_att_int <- read_csv(here("data", "per_att_int.csv"))
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+# Calculating mean ratings for gain and loss manipulation check by group using facet_wrap()
+
+```{r}
+
+glimpse(manipcheck)
+
+  manipcheck$group[manipcheck$group == "gain"] <- "Gain"
+  manipcheck$group[manipcheck$group == "loss"] <- "Loss"
+  manipcheck$question[manipcheck$question == "positive_benefits"] <- "To what extent did the information emphasise /n the benefits of using open science practices?"
+  manipcheck$question[manipcheck$question == "negative_conseq"] <- "To what extent did the information emphasise the consequences of not using open science practices?"
+
+manipcheck %>%
+    ggplot(aes(x = group, y = mean, fill = group)) +
+    geom_col(width = 0.7, position = "dodge", show.legend = FALSE) +
+    scale_y_continuous(expand = c(0,0),
+                       limits = c(0,5)) +
+    theme_classic() +
+    facet_wrap(~ question) +
+    geom_errorbar(aes(ymin=mean-StdErr, ymax=mean+StdErr),
+                  size=.3,
+                  width=.2,
+                  position=position_dodge(.9)) +
+     labs(x="Condition", y="Mean ratings")
+
+```
+
+# Calculating mean ratings for perception, attitude, and intention by group using facet_wrap()
+
+Categorical variable: group
+Continuous variable: perception_1, mean_att, mean_int
+
+```{r}
+
+glimpse(per_att_int)
+
+  per_att_int$group[per_att_int$group == "gain"] <- "Gain"
+  per_att_int$group[per_att_int$group == "loss"] <- "Loss"
+  per_att_int$question[per_att_int$question == "perception"] <- "Perception"
+  per_att_int$question[per_att_int$question == "attitude"] <- "Attitude"
+  per_att_int$question[per_att_int$question == "intention"] <- "Intention"
+
+per_att_int_ordered <- per_att_int
+per_att_int_ordered$question <- factor(per_att_int_ordered$question,
+                         levels = c("Perception", "Attitude", "Intention"))
+
+per_att_int_ordered %>%
+    ggplot(aes(x = group, y = mean, fill = group)) +
+    geom_col(width = 0.7, position = "dodge", show.legend = FALSE) +
+    scale_y_continuous(expand = c(0,0),
+                       limits = c(0,5)) +
+    theme_classic() +
+    facet_wrap(~ question) +
+    geom_errorbar(aes(ymin=mean-StdErr, ymax=mean+StdErr),
+                  size=.3,
+                  width=.2,
+                  position=position_dodge(.9)) +
+     labs(x="Condition", y="Mean ratings")
+
+```
