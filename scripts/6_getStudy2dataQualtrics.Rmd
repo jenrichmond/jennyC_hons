@@ -1,0 +1,69 @@
+---
+title: "Read Study 2 Qualtrics Sata"
+author: "Jenny Chen"
+date: "11/08/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Load packages + set API
+
+The qualtRics package reads data straight from Qualtrics into R via the API and saves the dataset as a .csv in the data folder.
+
+https://cran.r-project.org/web/packages/qualtRics/vignettes/qualtRics.html
+
+```{r message=FALSE, warning=FALSE}
+
+library(qualtRics)
+library(tidyverse)
+library(janitor)
+library(here)
+
+qualtrics_api_credentials(api_key = "RZNCuPM7MvUJmhi7wcSLN7NHx0WCVeIU6H7XiSeE",
+                          base_url = "unsw.syd1.qualtrics.com",
+                          install = TRUE, 
+                          overwrite = TRUE)
+
+# restart R or set enviornment 
+
+readRenviron("~/.Renviron")
+
+```
+
+JennyC surveyID Study 2 = SV_6Ey0eHh51ax5cCW
+
+```{r}
+
+questions <- survey_questions(surveyID = "SV_6Ey0eHh51ax5cCW")
+
+```
+
+```{r}
+
+data <- fetch_survey(surveyID = "SV_6Ey0eHh51ax5cCW", 
+                         force_request = TRUE, 
+                         verbose = TRUE) %>%
+  clean_names() 
+
+currentDate <- Sys.Date()
+
+csvFileName <- paste(currentDate,"_Study2data.csv",sep="")
+
+data %>% write_csv(here("data", file=csvFileName))
+
+```
+
+# Pulling out identifiable details for people who want to hear about the results
+
+```{r}
+
+consent_results <- data %>%
+  select(name, address, email_address, consent) 
+
+consent_results %>%
+  write_csv(here("data", "identifiable_details", "people_who_want_results2.csv" ))
+
+```
