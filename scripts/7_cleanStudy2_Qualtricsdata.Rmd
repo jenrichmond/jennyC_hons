@@ -1,5 +1,5 @@
 ---
-title: "Untitled"
+title: "Clean Qualtrics Study 2 Data"
 output: html_document
 ---
 
@@ -7,22 +7,179 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+```{r message=FALSE, warning=FALSE}
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+library(tidyverse)
+library(here)
+library(janitor)
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
 ```
 
-## Including Plots
+```{r message=FALSE, warning=FALSE}
 
-You can also embed plots, for example:
+datatest <-  read_csv(here("data", "2021-08-11_Study2data.csv"))
 
-```{r pressure, echo=FALSE}
-plot(pressure)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+# Selecting just variables of interest
+
+```{r}
+
+data_select <- datatest %>%
+  select(end_date, progress, response_id, group, gender, age_in_years, faculty_of_study, research_experience, perception_1, starts_with("attitude"), starts_with("intention"), manipulation_check_gf_1, manipulation_check_lf_1, starts_with("attention_attempt"),  starts_with("score"))
+
+```
+
+# Filtering out participants who did not complete the whole survey
+
+135 --> 127 participants = 8 participants did not complete the whole survey
+
+```{r}
+
+progress_filtered <- data_select %>%
+  filter(progress == "100")
+
+progress_filtered %>% 
+  count()
+
+```
+
+# Creating new exclude column for attention scores
+
+```{r}
+
+exclude_column <- progress_filtered %>%
+  mutate(atten_exclusion = case_when(score_attempt_1 >= 4 ~ 'Include',
+                               score_attempt_2 >= 4 ~ 'Include',
+                               score_attempt_3 >= 4 ~ 'Include',
+                               TRUE ~ 'Exclude'))
+
+```
+
+# Filtering out those that get exclude in the above column 
+
+127 --> 117 participants = 10 participants failed attention check
+
+```{r}
+
+attention_filtered <- exclude_column %>%
+  filter(atten_exclusion == "Include")
+
+important_data <- attention_filtered %>%
+  select(end_date, progress, response_id, group, gender, age_in_years, faculty_of_study, research_experience, perception_1, starts_with("attitude"), starts_with("intention"), manipulation_check_gf_1, manipulation_check_lf_1, atten_exclusion)
+
+```
+
+# Excluding participants who did not answer enough perception/attitude/intention questions
+
+From pre-registration: If a participant does not complete the single perceived severity question, at least 2 of 4 attitude questions, or at least 2 of 3 implementation intention questions, the participant’s response will be excluded from the analysis for that particular dependent variable.
+
+```{r}
+
+perception <- important_data %>%
+  select(response_id, group, starts_with("perception")) %>%
+  mutate(per_missed = rowSums(is.na(.))) %>%
+  mutate(per_exclude = case_when(per_missed == 0 ~ 'Include',
+                               TRUE ~ 'Exclude'))
+
+attitude <- important_data %>%
+  select(response_id, starts_with("attitude")) %>%
+  mutate(att_missed = rowSums(is.na(.))) %>%
+  mutate(att_exclude = case_when(att_missed <= 2 ~ 'Include',
+                               TRUE ~ 'Exclude'))
+
+intention <- important_data %>%
+  select(response_id, starts_with("intention")) %>%
+  mutate(int_missed = rowSums(is.na(.))) %>%
+  mutate(int_exclude = case_when(int_missed <= 1 ~ 'Include',
+                               TRUE ~ 'Exclude'))
+
+manipcheck <- important_data %>%
+  select(manipulation_check_gf_1, manipulation_check_lf_1)
+
+all_ratings <- cbind(perception, attitude, intention, manipcheck) %>%
+  select(-6, -13) %>% # dropping extra response_id columns
+  relocate(per_missed, .before = int_missed) %>%
+  relocate(att_missed, .before = int_missed) %>%
+  relocate(per_exclude, .before = int_exclude) %>%
+  relocate(att_exclude, .before = int_exclude) 
+
+```
+
+# Counting how many participants in each question type to exclude
+
+```{r}
+
+all_ratings %>%
+  tabyl(per_exclude)
+
+all_ratings %>%
+  tabyl(att_exclude)
+
+all_ratings %>%
+  tabyl(int_exclude)
+
+```
+
+```{r}
+
+per_ex <- all_ratings %>%
+  filter(per_exclude == "Exclude")
+
+per_ex$response_id
+
+```
+
+```{r}
+
+att_ex <- all_ratings %>%
+  filter(att_exclude == "Exclude")
+
+att_ex$response_id
+
+```
+
+```{r}
+
+int_ex <- all_ratings %>%
+  filter(int_exclude == "Exclude")
+
+int_ex$response_id
+
+```
+
+```{r}
+
+all_ratings <- all_ratings %>%
+  mutate(attitude_access_1 = ifelse(response_id == "R_3EB8OxsQDNpBX1C", NA, attitude_access_1)) 
+
+all_ratings %>%
+  filter(response_id == "R_3EB8OxsQDNpBX1C")
+
+```
+
+# Excluding participants who did not answer the response bias check accurately
+
+```{r}
+
+```
+
+# Calculating row means
+
+```{r}
+
+mean_ratings <- all_ratings %>%
+  mutate(mean_att = rowMeans(.[4:7], na.rm=TRUE)) %>%
+  mutate(mean_int = rowMeans(.[8:10], na.rm=TRUE)) %>%
+  select (response_id, group, perception_1, mean_att, mean_int, manipulation_check_gf_1, manipulation_check_lf_1)
+
+```
+
+# Writing clean data to .csv calling it "dateStudy2data_clean.csv"
+
+```{r}
+
+mean_ratings %>%
+  write_csv(here("data", "dateStudy2data_clean.csv" ))
+
+```
