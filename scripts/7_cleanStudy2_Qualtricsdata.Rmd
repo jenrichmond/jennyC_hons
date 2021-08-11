@@ -1,11 +1,15 @@
 ---
 title: "Clean Qualtrics Study 2 Data"
+author: "Jenny Chen"
+date: "11/08/2021"
 output: html_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
+# Loading packages
 
 ```{r message=FALSE, warning=FALSE}
 

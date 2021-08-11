@@ -1,5 +1,7 @@
 ---
-title: "Untitled"
+title: "Study 2 Descriptives"
+author: "Jenny Chen"
+date: "11/08/2021"
 output: html_document
 ---
 
@@ -7,22 +9,167 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+# Loading packages
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+```{r message=FALSE, warning=FALSE}
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+library(tidyverse)
+library(here)
+library(gt)
 
-```{r cars}
-summary(cars)
 ```
 
-## Including Plots
+# Reading data
 
-You can also embed plots, for example:
+```{r message=FALSE, warning=FALSE}
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+clean_data <- read_csv(here("data", "dateStudy2data_clean.csv"))
+
+clean_data <- clean_data %>%
+  mutate(group = factor(group, 
+                        levels = c(1, 2),
+                        labels = c("gain", "loss")))
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+# Getting statistics
+
+Categorical variable: group
+Continuous variable: perception_1, mean_att, mean_int
+
+Mean ratings for gain and loss manipulation check by group
+
+```{r}
+
+summary_manipcheck <- clean_data %>%
+  group_by(group) %>%
+  summarise(gf_M = mean(manipulation_check_gf_1, na.rm = TRUE),
+            gfSD = sd(manipulation_check_gf_1, na.rm = TRUE), 
+            gfN = n(), 
+            gfStdErr = gfSD/sqrt(gfN),
+            lf_M = mean(manipulation_check_lf_1, na.rm = TRUE),
+            lfSD = sd(manipulation_check_lf_1, na.rm = TRUE), 
+            lfN = n(), 
+            lfStdErr =  lfSD/sqrt(lfN))
+
+print(summary_manipcheck)
+  
+  # the gt() package will give you nicely formatted tables in your knitted documnet, you can also control digits displayed with fmt_number
+  
+    summary_manipcheck %>% 
+      gt() %>%
+    fmt_number(columns = c("gf_M", "gfSD", "gfStdErr", "lf_M", "lfSD", "lfStdErr"), 
+               decimals = 4)
+
+```
+
+Mean ratings for manipuation checks, perception, attitude, and intention by group
+
+```{r}
+
+summary_data <- clean_data %>%    
+  group_by(group) %>%
+  summarise(gf_M = mean(manipulation_check_gf_1, na.rm = TRUE),
+            gfSD = sd(manipulation_check_gf_1, na.rm = TRUE), 
+            gfN = n(), 
+            gfStdErr = gfSD/sqrt(gfN),
+            lf_M = mean(manipulation_check_lf_1, na.rm = TRUE),
+            lfSD = sd(manipulation_check_lf_1, na.rm = TRUE), 
+            lfN = n(), 
+            lfStdErr =  lfSD/sqrt(lfN),
+            per_M = mean(perception_1, na.rm = TRUE),
+            perSD = sd(perception_1, na.rm = TRUE), 
+            perN = n(), 
+            perStdErr =  perSD/sqrt(perN),
+            att_M = mean(mean_att, na.rm = TRUE),
+            attSD = sd(mean_att, na.rm = TRUE), 
+            attN = n(), 
+            attStdErr =  attSD/sqrt(attN),
+            int_M = mean(mean_att, na.rm = TRUE),
+            intSD = sd(mean_att, na.rm = TRUE), 
+            intN = n(), 
+            intStdErr =  intSD/sqrt(intN))
+
+print(summary_data)
+
+summary_data %>%
+  gt() %>%
+  fmt_number(columns = c("gf_M", "gfSD", "gfStdErr", "lf_M", "lfSD", "lfStdErr", "per_M", "perSD", "perStdErr", "att_M", "attSD", "attStdErr", "int_M", "intSD", "intStdErr"),
+            decimals = 4)
+
+```
+
+# Saving summary data (M, SD, N, StdErr) as a .csv
+
+```{r}
+
+summary_data %>%
+  write_csv(here("data", "summary_data_study2.csv" ))
+
+```
+
+# Getting statistics with less repetitive code
+
+```{r}
+
+clean_data <- clean_data %>%
+  rename(perception = perception_1, attitude = mean_att, intention = mean_int, positive_benefits = manipulation_check_gf_1, negative_conseq = manipulation_check_lf_1)
+
+names(clean_data)
+
+```
+
+```{r}
+
+clean_data_long <- clean_data %>%
+  pivot_longer(names_to = "question", values_to = "rating", perception:negative_conseq)
+
+```
+
+Manipulation check summary stats:
+
+```{r}
+
+manipcheck <- clean_data_long %>%
+  filter(question %in% c("positive_benefits", "negative_conseq")) %>%
+  group_by(group, question) %>%
+  summarise(mean = mean(rating, na.rm = TRUE),
+            SD = sd(rating, na.rm = TRUE), 
+            N = n(), 
+            StdErr = SD/sqrt(N)) 
+
+manipcheck %>%
+  gt() %>%
+  fmt_number(columns = c("mean", "SD", "StdErr"), 
+               decimals = 4)
+
+```
+
+Perception, attitude, and intention summary stats:
+
+```{r}
+
+per_att_int <- clean_data_long %>%
+  filter(question %in% c("perception", "attitude", "intention")) %>%
+  group_by(group, question) %>%
+  summarise(mean = mean(rating, na.rm = TRUE),
+            SD = sd(rating, na.rm = TRUE), 
+            N = n(), 
+            StdErr = SD/sqrt(N)) 
+
+per_att_int %>%
+  gt() %>%
+  fmt_number(columns = c("mean", "SD", "StdErr"), 
+               decimals = 4)
+
+```
+
+```{r}
+
+manipcheck %>%
+  write_csv(here("data", "manipcheck.csv" ))
+
+per_att_int %>%
+  write_csv(here("data", "per_att_int.csv" ))
+
+```

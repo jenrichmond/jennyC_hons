@@ -9,7 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Load packages + set API
+# Loading packages + setting API
 
 The qualtRics package reads data straight from Qualtrics into R via the API and saves the dataset as a .csv in the data folder.
 
