@@ -26,6 +26,8 @@ clean_data <- read_csv(here("data", "dateStudy2data_clean.csv"))
 
 ```
 
+# Performing independent t-tests
+
 # Gain-Frame Manipulation Check
 
 ```{r}
