@@ -164,6 +164,9 @@ all_ratings %>%
 
 # Excluding participants who did not answer the response bias check accurately
 
+> Problem: didn't realise leaving the slider at '3' would result in NA
+Change NAs to 3s? Safe to assume people who didn't get excluded from attention check or missing Qs actually answered '3' instead of skipping the question?
+
 ```{r}
 
 ```
