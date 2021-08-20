@@ -197,3 +197,44 @@ mean_ratings %>%
 
 ```
 
+# demographics
+
+Gender
+
+```{r}
+
+important_data %>%
+  group_by(group) %>%
+  count(gender)
+
+```
+
+Age
+
+```{r}
+
+important_data %>%
+  group_by(group) %>%
+  count(age_in_years)
+
+```
+
+Faculty of study
+
+```{r}
+
+important_data %>%
+  group_by(group) %>%
+  count(faculty_of_study)
+
+```
+
+Research experience
+
+```{r}
+
+important_data %>%
+  group_by(group) %>%
+  count(research_experience)
+
+```
