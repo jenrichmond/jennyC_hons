@@ -30,7 +30,7 @@ datatest <-  read_csv(here("data", "2021-08-11_Study2data.csv"))
 ```{r}
 
 data_select <- datatest %>%
-  select(end_date, progress, response_id, group, gender, age_in_years, faculty_of_study, research_experience, perception_1, starts_with("attitude"), starts_with("intention"), manipulation_check_gf_1, manipulation_check_lf_1, starts_with("attention_attempt"),  starts_with("score"))
+  select(end_date, progress, response_id, group, gender, age_in_years, faculty_of_study, research_experience, perception_1, starts_with("attitude"), starts_with("intention"), manipulation_check_gf_1, manipulation_check_lf_1, starts_with("attention_attempt"),  starts_with("score"), response_check_1)
 
 ```
 
@@ -48,11 +48,31 @@ progress_filtered %>%
 
 ```
 
+# Excluding participants who did not answer the response bias check accurately
+
+> Problem: didn't realise leaving the slider at '3' would result in NA
+Change NAs to 3s? Safe to assume people who didn't get excluded from attention check or missing Qs actually answered '3' instead of skipping the question?
+
+127 --> 113 participants = 14 participants did not pass the response bias check
+
+```{r}
+
+progress_filtered$response_check_1[is.na(progress_filtered$response_check_1)] <- "3"
+
+responsecheck_filtered <- progress_filtered %>%
+  filter(response_check_1 >= 2.75) %>%
+  filter(response_check_1 <= 3.25)
+
+responsecheck_filtered %>% 
+  count()
+
+```
+
 # Creating new exclude column for attention scores
 
 ```{r}
 
-exclude_column <- progress_filtered %>%
+exclude_column <- responsecheck_filtered %>%
   mutate(atten_exclusion = case_when(score_attempt_1 >= 4 ~ 'Include',
                                score_attempt_2 >= 4 ~ 'Include',
                                score_attempt_3 >= 4 ~ 'Include',
@@ -62,7 +82,9 @@ exclude_column <- progress_filtered %>%
 
 # Filtering out those that get exclude in the above column 
 
-127 --> 117 participants = 10 participants failed attention check
+> Most of the participants who did not pass the attention check also failed the response bias check that I excluded above. Is this ok when reporting in the results? "A further ___ were excluded from failing the attention check". Or do I have to give the exact number of exclusions for progress, response bias, and attention check, even though there is a lot of overlap
+
+113 --> 109 participants = 4 participants failed attention check
 
 ```{r}
 
@@ -70,7 +92,7 @@ attention_filtered <- exclude_column %>%
   filter(atten_exclusion == "Include")
 
 important_data <- attention_filtered %>%
-  select(end_date, progress, response_id, group, gender, age_in_years, faculty_of_study, research_experience, perception_1, starts_with("attitude"), starts_with("intention"), manipulation_check_gf_1, manipulation_check_lf_1, atten_exclusion)
+  select(end_date, progress, response_id, group, gender, age_in_years, faculty_of_study, research_experience, perception_1, starts_with("attitude"), starts_with("intention"), manipulation_check_gf_1, manipulation_check_lf_1, atten_exclusion, response_check_1)
 
 ```
 
@@ -159,15 +181,6 @@ all_ratings <- all_ratings %>%
 
 all_ratings %>%
   filter(response_id == "R_3EB8OxsQDNpBX1C")
-
-```
-
-# Excluding participants who did not answer the response bias check accurately
-
-> Problem: didn't realise leaving the slider at '3' would result in NA
-Change NAs to 3s? Safe to assume people who didn't get excluded from attention check or missing Qs actually answered '3' instead of skipping the question?
-
-```{r}
 
 ```
 
