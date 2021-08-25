@@ -84,6 +84,8 @@ exclude_column <- responsecheck_filtered %>%
 
 > Most of the participants who did not pass the attention check also failed the response bias check that I excluded above. Is this ok when reporting in the results? "A further ___ were excluded from failing the attention check". Or do I have to give the exact number of exclusions for progress, response bias, and attention check, even though there is a lot of overlap
 
+> JR I think you shouldn't be thinking of these as overlapping... I think there are levels of not being inlcuded, if you didn't complete you are out... Out of the people who completed, the next hurdle was to pass the attention check... and THEN out of people who 1. completed, and 2. learned somethnig form the information, we want to throw out those who were probably answering questions randomly... 
+
 113 --> 109 participants = 4 participants failed attention check
 
 ```{r}
