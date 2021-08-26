@@ -185,6 +185,26 @@ manipcheck %>%
 ```
 
 
+```{r}
+manipcheck %>%
+    ggplot(aes(x = question, y = mean, fill = question)) +
+    geom_col(width = 0.7, position = "dodge", show.legend = FALSE) +
+  facet_wrap(~ group)
+
+
++
+    scale_y_continuous(expand = c(0,0),
+                       limits = c(0,5)) +
+    theme_classic() +
+    facet_wrap(~ group) +
+    geom_errorbar(aes(ymin=mean-StdErr, ymax=mean+StdErr),
+                  size=.3,
+                  width=.2,
+                  position=position_dodge(.9)) +
+     labs(x="Condition", y="Mean ratings of information")
+```
+
+
 
 #Mean ratings for perception by group
 

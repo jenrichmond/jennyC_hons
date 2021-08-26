@@ -191,7 +191,10 @@ all_ratings %>%
 mean_ratings <- all_ratings %>%
   mutate(mean_att = rowMeans(.[4:7], na.rm=TRUE)) %>%
   mutate(mean_int = rowMeans(.[8:10], na.rm=TRUE)) %>%
-  select (response_id, group, perception_1, mean_att, mean_int, manipulation_check_gf_1, manipulation_check_lf_1)
+  select(response_id, group, perception_1, mean_att, mean_int, manipulation_check_gf_1, manipulation_check_lf_1)
+
+mean_ratings %>%
+  tabyl(group)
 
 ```
 
