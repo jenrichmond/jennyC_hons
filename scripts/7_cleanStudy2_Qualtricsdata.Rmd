@@ -57,11 +57,9 @@ Change NAs to 3s? Safe to assume people who didn't get excluded from attention c
 
 ```{r}
 
-progress_filtered$response_check_1[is.na(progress_filtered$response_check_1)] <- "3"
-
 responsecheck_filtered <- progress_filtered %>%
-  filter(response_check_1 >= 2.75) %>%
-  filter(response_check_1 <= 3.25)
+  filter(is.na(response_check_1) | response_check_1 >= 2.75 & response_check_1 <= 3.25) 
+
 
 responsecheck_filtered %>% 
   count()
