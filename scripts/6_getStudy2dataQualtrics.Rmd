@@ -22,11 +22,6 @@ library(tidyverse)
 library(janitor)
 library(here)
 
-qualtrics_api_credentials(api_key = "RZNCuPM7MvUJmhi7wcSLN7NHx0WCVeIU6H7XiSeE",
-                          base_url = "unsw.syd1.qualtrics.com",
-                          install = TRUE, 
-                          overwrite = TRUE)
-
 # restart R or set enviornment 
 
 readRenviron("~/.Renviron")
