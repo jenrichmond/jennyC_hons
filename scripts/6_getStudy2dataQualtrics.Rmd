@@ -13,6 +13,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
 The qualtRics package reads data straight from Qualtrics into R via the API and saves the dataset as a .csv in the data folder.
 
+> removed api here
+
 https://cran.r-project.org/web/packages/qualtRics/vignettes/qualtRics.html
 
 ```{r message=FALSE, warning=FALSE}
