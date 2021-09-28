@@ -22,7 +22,7 @@ library(tidyverse)
 library(janitor)
 library(here)
 
-qualtrics_api_credentials(api_key = "RZNCuPM7MvUJmhi7wcSLN7NHx0WCVeIU6H7XiSeE",
+qualtrics_api_credentials(api_key =     "Fo3JT3EY4XvmrZUh0Y2ELmQUig66DM9I9PNROSbz",
                           base_url = "unsw.syd1.qualtrics.com",
                           install = TRUE, 
                           overwrite = TRUE)
@@ -43,7 +43,7 @@ questions <- survey_questions(surveyID = "SV_d4PE06XiLBkNmse")
 
 
 ```{r}
-data <- fetch_survey(surveyID = "SV_d4PE06XiLBkNmse", 
+data1 <- fetch_survey(surveyID = "SV_d4PE06XiLBkNmse", 
                          force_request = TRUE, 
                          verbose = TRUE) %>%
   clean_names() 
@@ -52,7 +52,7 @@ currentDate <- Sys.Date()
 
 csvFileName <- paste(currentDate,"_Study1data.csv",sep="")
 
-data %>% write_csv(here("data", file=csvFileName))
+data1 %>% write_csv(here("data", file=csvFileName))
 
 
 
