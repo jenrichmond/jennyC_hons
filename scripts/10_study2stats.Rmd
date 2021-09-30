@@ -51,7 +51,7 @@ ttestIS(formula = manipulation_check_lf_1 ~ group)
 ```{r}
 
 clean_data %>%
-ttestIS(formula = perception_1 ~ group)
+ttestIS(formula = Perception_1 ~ group)
 
 ```
 

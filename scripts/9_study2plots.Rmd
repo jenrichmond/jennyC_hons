@@ -23,7 +23,7 @@ library(ggeasy)
 
 ```{r message=FALSE, warning=FALSE}
 
-clean_data <- read_csv(here("data", "dateStudy1data_clean.csv"))
+clean_data <- read_csv(here("data", "dateStudy2data_clean.csv"))
 
 summary_data <- read_csv(here("data", "summary_data.csv"))
 

@@ -41,8 +41,16 @@ Mean ratings for gain and loss manipulation check by group
 
 ```{r}
 
+clean_data <- clean_data %>%
+  rename(manipulation_check_gf_1 = "ManipulationCheck GF_1") %>%
+  rename(manipulation_check_lf_1 = "ManipulationCheck LF_1") %>%
+
+```
+
+```{r}
+
 summary_manipcheck <- clean_data %>%
-  group_by(group) %>%
+  group_by(Group) %>%
   summarise(gf_M = mean(manipulation_check_gf_1, na.rm = TRUE),
             gfSD = sd(manipulation_check_gf_1, na.rm = TRUE), 
             gfN = n(), 
@@ -77,8 +85,8 @@ summary_data <- clean_data %>%
             lfSD = sd(manipulation_check_lf_1, na.rm = TRUE), 
             lfN = n(), 
             lfStdErr =  lfSD/sqrt(lfN),
-            per_M = mean(perception_1, na.rm = TRUE),
-            perSD = sd(perception_1, na.rm = TRUE), 
+            per_M = mean(Perception_1, na.rm = TRUE),
+            perSD = sd(Perception_1, na.rm = TRUE), 
             perN = n(), 
             perStdErr =  perSD/sqrt(perN),
             att_M = mean(mean_att, na.rm = TRUE),

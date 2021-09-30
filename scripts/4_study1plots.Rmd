@@ -354,3 +354,13 @@ per_att_int_ordered %>%
      labs(x="Condition", y="Mean ratings")
 
 ```
+
+#Likert
+
+```{r}
+
+library(likert)
+
+```
+
+

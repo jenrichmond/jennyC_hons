@@ -21,7 +21,7 @@ library(janitor)
 
 ```{r message=FALSE, warning=FALSE}
 
-datatest <-  read_csv(here("data", "2021-08-11_Study2data.csv"))
+datatest <-  read_csv(here("Study_2_Data.csv"))
 
 ```
 
@@ -30,7 +30,7 @@ datatest <-  read_csv(here("data", "2021-08-11_Study2data.csv"))
 ```{r}
 
 data_select <- datatest %>%
-  select(end_date, progress, response_id, group, gender, age_in_years, faculty_of_study, research_experience, perception_1, starts_with("attitude"), starts_with("intention"), manipulation_check_gf_1, manipulation_check_lf_1, starts_with("attention_attempt"),  starts_with("score"), response_check_1)
+  select(EndDate, Progress, ResponseId, Group, Gender, "Age in Years", "Faculty of Study", "Research Experience", Perception_1, starts_with("Attitude"), starts_with("Intention"), "ManipulationCheck GF_1", "ManipulationCheck LF_1", starts_with("AttentionAttempt"),  starts_with("Score"), "Response Check_1")
 
 ```
 
@@ -41,7 +41,7 @@ data_select <- datatest %>%
 ```{r}
 
 progress_filtered <- data_select %>%
-  filter(progress == "100")
+  filter(Progress == "100")
 
 progress_filtered %>% 
   count()
@@ -53,9 +53,9 @@ progress_filtered %>%
 ```{r}
 
 exclude_column <- progress_filtered %>%
-  mutate(atten_exclusion = case_when(score_attempt_1 >= 4 ~ 'Include',
-                               score_attempt_2 >= 4 ~ 'Include',
-                               score_attempt_3 >= 4 ~ 'Include',
+  mutate(atten_exclusion = case_when("Score Attempt 1" >= 4 ~ 'Include',
+                               "Score Attempt 2" >= 4 ~ 'Include',
+                               "Score Attempt 3" >= 4 ~ 'Include',
                                TRUE ~ 'Exclude'))
 
 ```
@@ -66,7 +66,7 @@ exclude_column <- progress_filtered %>%
 
 > JR I think you shouldn't be thinking of these as overlapping... I think there are levels of not being inlcuded, if you didn't complete you are out... Out of the people who completed, the next hurdle was to pass the attention check... and THEN out of people who 1. completed, and 2. learned somethnig form the information, we want to throw out those who were probably answering questions randomly... 
 
-127 --> 117 participants = 10 participants failed attention check
+212 --> 200 participants = 12 participants failed attention check
 
 ```{r}
 
@@ -80,19 +80,26 @@ attention_filtered <- exclude_column %>%
 > Problem: didn't realise leaving the slider at '3' would result in NA
 Change NAs to 3s? Safe to assume people who didn't get excluded from attention check or missing Qs actually answered '3' instead of skipping the question?
 
-117 --> 109 participants = 8 participants did not pass the response bias check
+200 --> 184 participants = 16 participants did not pass the response bias check
 
 ```{r}
 
-responsecheck_filtered <- attention_filtered %>%
+renamed_attention <- attention_filtered %>%
+  rename(response_check_1 = "Response Check_1")
+
+```
+
+```{r}
+
+responsecheck_filtered <- renamed_attention %>%
   filter(is.na(response_check_1) | response_check_1 >= 2.75 & response_check_1 <= 3.25) 
 
 responsecheck_filtered %>% 
   count()
 
 important_data <- responsecheck_filtered %>%
-  select(end_date, progress, response_id, group, gender, age_in_years, faculty_of_study, research_experience, perception_1, starts_with("attitude"), starts_with("intention"), manipulation_check_gf_1, manipulation_check_lf_1, atten_exclusion, response_check_1)
-
+  select(EndDate, Progress, ResponseId, Group, Gender, "Age in Years", "Faculty of Study", "Research Experience", Perception_1, starts_with("Attitude"), starts_with("Intention"), "ManipulationCheck GF_1", "ManipulationCheck LF_1", atten_exclusion, response_check_1)
+  
 ```
 
 # Excluding participants who did not answer enough perception/attitude/intention questions
@@ -102,25 +109,25 @@ From pre-registration: If a participant does not complete the single perceived s
 ```{r}
 
 perception <- important_data %>%
-  select(response_id, group, starts_with("perception")) %>%
+  select(ResponseId, Group, starts_with("Perception")) %>%
   mutate(per_missed = rowSums(is.na(.))) %>%
   mutate(per_exclude = case_when(per_missed == 0 ~ 'Include',
                                TRUE ~ 'Exclude'))
 
 attitude <- important_data %>%
-  select(response_id, starts_with("attitude")) %>%
+  select(ResponseId, starts_with("Attitude")) %>%
   mutate(att_missed = rowSums(is.na(.))) %>%
   mutate(att_exclude = case_when(att_missed <= 2 ~ 'Include',
                                TRUE ~ 'Exclude'))
 
 intention <- important_data %>%
-  select(response_id, starts_with("intention")) %>%
+  select(ResponseId, starts_with("Intention")) %>%
   mutate(int_missed = rowSums(is.na(.))) %>%
   mutate(int_exclude = case_when(int_missed <= 1 ~ 'Include',
                                TRUE ~ 'Exclude'))
 
 manipcheck <- important_data %>%
-  select(manipulation_check_gf_1, manipulation_check_lf_1)
+  select("ManipulationCheck GF_1", "ManipulationCheck LF_1")
 
 all_ratings <- cbind(perception, attitude, intention, manipcheck) %>%
   select(-6, -13) %>% # dropping extra response_id columns
@@ -160,7 +167,7 @@ per_ex$response_id
 att_ex <- all_ratings %>%
   filter(att_exclude == "Exclude")
 
-att_ex$response_id
+att_ex$ResponseId
 
 ```
 
@@ -169,7 +176,28 @@ att_ex$response_id
 int_ex <- all_ratings %>%
   filter(int_exclude == "Exclude")
 
-int_ex$response_id
+int_ex$ResponseId
+
+```
+
+```{r}
+
+all_ratings <- all_ratings %>%
+  rename(response_id = "ResponseId")
+
+```
+
+```{r}
+
+all_ratings <- all_ratings %>%
+  rename(attitude_access_1 = "Attitude Access_1")
+
+```
+
+```{r}
+
+all_ratings <- all_ratings %>%
+  rename(intention_access_1 = "Intention Access_1")
 
 ```
 
@@ -177,22 +205,32 @@ int_ex$response_id
 
 all_ratings <- all_ratings %>%
   mutate(attitude_access_1 = ifelse(response_id == "R_3EB8OxsQDNpBX1C", NA, attitude_access_1)) 
-
+  
 all_ratings %>%
   filter(response_id == "R_3EB8OxsQDNpBX1C")
 
 ```
 
+```{r}
+
+all_ratings <- all_ratings %>%
+  mutate(intention_access_1 = ifelse(response_id == "R_2dzke7muHlM004v", NA, intention_access_1)) 
+  
+all_ratings %>%
+  filter(response_id == "R_2dzke7muHlM004v")
+
+```
+  
 # Calculating row means
 
 ```{r}
 
 mean_ratings <- all_ratings %>%
-  mutate(mean_att = rowMeans(.[4:7], na.rm=TRUE)) %>%
-  mutate(mean_int = rowMeans(.[8:10], na.rm=TRUE)) %>%
-  select(response_id, group, perception_1, mean_att, mean_int, manipulation_check_gf_1, manipulation_check_lf_1)
+  mutate(mean_att = rowMeans(.[4:7], na.rm = TRUE)) %>%
+  mutate(mean_int = rowMeans(.[8:10], na.rm = TRUE)) %>%
+  select(response_id, Group, Perception_1, mean_att, mean_int, "ManipulationCheck GF_1", "ManipulationCheck LF_1")
 
-mean_ratings %>%
+  mean_ratings %>%
   tabyl(group)
 
 ```
