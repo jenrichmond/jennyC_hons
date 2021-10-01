@@ -52,10 +52,19 @@ progress_filtered %>%
 
 ```{r}
 
+progress_filtered <- progress_filtered %>%
+  rename(score_attempt_1 = "Score Attempt 1") %>%
+  rename(score_attempt_2 = "Score Attempt 2") %>%
+  rename(score_attempt_3 = "Score Attempt 3")
+
+```
+
+```{r}
+
 exclude_column <- progress_filtered %>%
-  mutate(atten_exclusion = case_when("Score Attempt 1" >= 4 ~ 'Include',
-                               "Score Attempt 2" >= 4 ~ 'Include',
-                               "Score Attempt 3" >= 4 ~ 'Include',
+  mutate(atten_exclusion = case_when(score_attempt_1 >= 4 ~ 'Include',
+                               score_attempt_2 >= 4 ~ 'Include',
+                               score_attempt_3 >= 4 ~ 'Include',
                                TRUE ~ 'Exclude'))
 
 ```
@@ -66,12 +75,15 @@ exclude_column <- progress_filtered %>%
 
 > JR I think you shouldn't be thinking of these as overlapping... I think there are levels of not being inlcuded, if you didn't complete you are out... Out of the people who completed, the next hurdle was to pass the attention check... and THEN out of people who 1. completed, and 2. learned somethnig form the information, we want to throw out those who were probably answering questions randomly... 
 
-212 --> 200 participants = 12 participants failed attention check
+200 --> 189 participants = 11 participants failed attention check
 
 ```{r}
 
 attention_filtered <- exclude_column %>%
   filter(atten_exclusion == "Include")
+
+attention_filtered %>% 
+  count()
 
 ```
 
@@ -80,7 +92,7 @@ attention_filtered <- exclude_column %>%
 > Problem: didn't realise leaving the slider at '3' would result in NA
 Change NAs to 3s? Safe to assume people who didn't get excluded from attention check or missing Qs actually answered '3' instead of skipping the question?
 
-200 --> 184 participants = 16 participants did not pass the response bias check
+189 --> 180 participants = 9 participants did not pass the response bias check
 
 ```{r}
 
@@ -232,8 +244,8 @@ all_ratings %>%
 
 ```{r}
 
-all_ratings$attitude_access_1 <- as.numeric(all_ratings$attitude_access_1)
 all_ratings$Perception_1 <- as.numeric(all_ratings$Perception_1)
+all_ratings$`Attitude Overall_1` <- as.numeric(all_ratings$`Attitude Overall_1`)
 all_ratings$`Attitude Design_1` <- as.numeric(all_ratings$`Attitude Design_1`)
 all_ratings$`Attitude Data&Analys_1` <- as.numeric(all_ratings$`Attitude Data&Analys_1`)
 all_ratings$attitude_access_1 <- as.numeric(all_ratings$attitude_access_1)
@@ -261,5 +273,91 @@ mean_ratings <- all_ratings %>%
 
 mean_ratings %>%
   write_csv(here("data", "dateStudy2data_clean.csv" ))
+
+```
+
+# demographics
+
+Group
+
+```{r}
+
+datatest %>%
+  count(Group)
+
+```
+
+```{r}
+
+important_data %>%
+  count(Group)
+
+```
+
+Gender
+
+```{r}
+
+datatest %>%
+  count(Gender)
+
+```
+
+```{r}
+
+datatest %>%
+  group_by(Group) %>%
+  count(Gender)
+
+```
+
+Age
+
+```{r}
+
+datatest %>%
+  count('Age in Years')
+
+```
+
+```{r}
+
+datatest %>%
+  group_by(Group) %>%
+  count('Age in Years')
+
+```
+
+Faculty of study
+
+```{r}
+
+datatest %>%
+  count('Faculty of Study')
+
+```
+
+```{r}
+
+datatest %>%
+  group_by(Group) %>%
+  count('Faculty of Study')
+
+```
+
+Research experience
+
+```{r}
+
+datatest %>%
+  count('Research Experience')
+
+```
+
+```{r}
+
+datatest %>%
+  group_by(Group) %>%
+  count('Research Experience')
 
 ```
