@@ -26,7 +26,7 @@ library(gt)
 clean_data <- read_csv(here("data", "dateStudy2data_clean.csv"))
 
 clean_data <- clean_data %>%
-  mutate(group = factor(group, 
+  mutate(group = factor(Group, 
                         levels = c(1, 2),
                         labels = c("gain", "loss")))
 
@@ -43,7 +43,7 @@ Mean ratings for gain and loss manipulation check by group
 
 clean_data <- clean_data %>%
   rename(manipulation_check_gf_1 = "ManipulationCheck GF_1") %>%
-  rename(manipulation_check_lf_1 = "ManipulationCheck LF_1") %>%
+  rename(manipulation_check_lf_1 = "ManipulationCheck LF_1")
 
 ```
 
@@ -121,7 +121,7 @@ summary_data %>%
 ```{r}
 
 clean_data <- clean_data %>%
-  rename(perception = perception_1, attitude = mean_att, intention = mean_int, positive_benefits = manipulation_check_gf_1, negative_conseq = manipulation_check_lf_1)
+  rename(perception = Perception_1, attitude = mean_att, intention = mean_int, positive_benefits = manipulation_check_gf_1, negative_consequences = manipulation_check_lf_1)
 
 names(clean_data)
 
@@ -130,7 +130,7 @@ names(clean_data)
 ```{r}
 
 clean_data_long <- clean_data %>%
-  pivot_longer(names_to = "question", values_to = "rating", perception:negative_conseq)
+  pivot_longer(names_to = "question", values_to = "rating", perception:negative_consequences)
 
 ```
 
@@ -139,7 +139,7 @@ Manipulation check summary stats:
 ```{r}
 
 manipcheck <- clean_data_long %>%
-  filter(question %in% c("positive_benefits", "negative_conseq")) %>%
+  filter(question %in% c("positive_benefits", "negative_consequences")) %>%
   group_by(group, question) %>%
   summarise(mean = mean(rating, na.rm = TRUE),
             SD = sd(rating, na.rm = TRUE), 

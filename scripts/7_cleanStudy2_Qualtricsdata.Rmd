@@ -36,7 +36,7 @@ data_select <- datatest %>%
 
 # Filtering out participants who did not complete the whole survey
 
-135 --> 127 participants = 8 participants did not complete the whole survey
+212 --> 200 participants = 8 participants did not complete the whole survey
 
 ```{r}
 
@@ -225,15 +225,35 @@ all_ratings %>%
 
 ```{r}
 
+all_ratings %>%
+  glimpse()
+
+```
+
+```{r}
+
+all_ratings$attitude_access_1 <- as.numeric(all_ratings$attitude_access_1)
+all_ratings$Perception_1 <- as.numeric(all_ratings$Perception_1)
+all_ratings$`Attitude Design_1` <- as.numeric(all_ratings$`Attitude Design_1`)
+all_ratings$`Attitude Data&Analys_1` <- as.numeric(all_ratings$`Attitude Data&Analys_1`)
+all_ratings$attitude_access_1 <- as.numeric(all_ratings$attitude_access_1)
+all_ratings$`Intention Design_1` <- as.numeric(all_ratings$`Intention Design_1`)
+all_ratings$`Intention Data_1` <- as.numeric(all_ratings$`Intention Data_1`)
+all_ratings$intention_access_1 <- as.numeric(all_ratings$intention_access_1)
+
+```
+
+```{r}
+
 mean_ratings <- all_ratings %>%
   mutate(mean_att = rowMeans(.[4:7], na.rm = TRUE)) %>%
   mutate(mean_int = rowMeans(.[8:10], na.rm = TRUE)) %>%
   select(response_id, Group, Perception_1, mean_att, mean_int, "ManipulationCheck GF_1", "ManipulationCheck LF_1")
 
-  mean_ratings %>%
-  tabyl(group)
-
 ```
+
+ mean_ratings %>%
+  tabyl(group)
 
 # Writing clean data to .csv calling it "dateStudy2data_clean.csv"
 

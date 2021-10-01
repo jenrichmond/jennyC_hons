@@ -37,25 +37,28 @@ per_att_int <- read_csv(here("data", "per_att_int.csv"))
 
 ```{r}
 
-glimpse(manipcheck)
+manipcheck <- manipcheck %>%
+  mutate(group = factor(group, 
+                        levels = c("gain", "loss"),
+                        labels = c("Gain group", "Loss group")))
 
-  manipcheck$group[manipcheck$group == "gain"] <- "Gain"
-  manipcheck$group[manipcheck$group == "loss"] <- "Loss"
-  manipcheck$question[manipcheck$question == "positive_benefits"] <- "To what extent did the information emphasise /n the benefits of using open science practices?"
-  manipcheck$question[manipcheck$question == "negative_conseq"] <- "To what extent did the information emphasise the consequences of not using open science practices?"
+manipcheck <- manipcheck %>%
+  mutate(question = factor(question, 
+                        levels = c("positive_benefits", "negative_consequences"),
+                        labels = c("Positive benefits", "Negative consequences")))
 
 manipcheck %>%
-    ggplot(aes(x = group, y = mean, fill = group)) +
+    ggplot(aes(x = question, y = mean, fill = question)) +
     geom_col(width = 0.7, position = "dodge", show.legend = FALSE) +
     scale_y_continuous(expand = c(0,0),
                        limits = c(0,5)) +
     theme_classic() +
-    facet_wrap(~ question) +
+    facet_wrap(~ group) +
     geom_errorbar(aes(ymin=mean-StdErr, ymax=mean+StdErr),
                   size=.3,
                   width=.2,
                   position=position_dodge(.9)) +
-     labs(x="Condition", y="Mean ratings")
+     labs(x="Type of information", y="Mean ratings of information")
 
 ```
 

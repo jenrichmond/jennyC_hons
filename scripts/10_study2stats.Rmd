@@ -33,7 +33,7 @@ clean_data <- read_csv(here("data", "dateStudy2data_clean.csv"))
 ```{r}
 
 clean_data %>%
-ttestIS(formula = manipulation_check_gf_1 ~ group)
+ttestIS(formula = `ManipulationCheck GF_1` ~ Group)
 
 ```
 
@@ -42,7 +42,7 @@ ttestIS(formula = manipulation_check_gf_1 ~ group)
 ```{r}
 
 clean_data %>%
-ttestIS(formula = manipulation_check_lf_1 ~ group)
+ttestIS(formula = `ManipulationCheck LF_1` ~ Group)
 
 ```
 
@@ -51,7 +51,7 @@ ttestIS(formula = manipulation_check_lf_1 ~ group)
 ```{r}
 
 clean_data %>%
-ttestIS(formula = Perception_1 ~ group)
+ttestIS(formula = Perception_1 ~ Group)
 
 ```
 
@@ -60,7 +60,7 @@ ttestIS(formula = Perception_1 ~ group)
 ```{r}
 
 clean_data %>%
-ttestIS(formula = mean_att ~ group)
+ttestIS(formula = mean_att ~ Group)
 
 ```
 
@@ -69,6 +69,6 @@ ttestIS(formula = mean_att ~ group)
 ```{r}
 
 clean_data %>%
-ttestIS(formula = mean_int ~ group)
+ttestIS(formula = mean_int ~ Group)
 
 ```
