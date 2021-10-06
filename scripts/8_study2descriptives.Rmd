@@ -175,9 +175,9 @@ per_att_int %>%
 ```{r}
 
 manipcheck %>%
-  write_csv(here("data", "manipcheck.csv" ))
+  write_csv(here("data", "manipcheck2.csv" ))
 
 per_att_int %>%
-  write_csv(here("data", "per_att_int.csv" ))
+  write_csv(here("data", "per_att_int2.csv" ))
 
 ```

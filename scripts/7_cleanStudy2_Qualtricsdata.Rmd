@@ -312,11 +312,18 @@ datatest %>%
 ```
 
 Age
+  
+```{r}
 
+datatest <- datatest %>%
+  rename(age_in_years = "Age in Years")
+  
+```
+  
 ```{r}
 
 datatest %>%
-  count('Age in Years')
+  count(age_in_years)
 
 ```
 
@@ -324,7 +331,7 @@ datatest %>%
 
 datatest %>%
   group_by(Group) %>%
-  count('Age in Years')
+  count(age_in_years)
 
 ```
 
@@ -332,8 +339,15 @@ Faculty of study
 
 ```{r}
 
+datatest <- datatest %>%
+  rename(faculty_of_study = "Faculty of Study")
+  
+```
+
+```{r}
+
 datatest %>%
-  count('Faculty of Study')
+  count(faculty_of_study)
 
 ```
 
@@ -341,7 +355,7 @@ datatest %>%
 
 datatest %>%
   group_by(Group) %>%
-  count('Faculty of Study')
+  count(faculty_of_study)
 
 ```
 
@@ -349,8 +363,15 @@ Research experience
 
 ```{r}
 
+datatest <- datatest %>%
+  rename(research_experience = "Research Experience")
+  
+```
+
+```{r}
+
 datatest %>%
-  count('Research Experience')
+  count(research_experience)
 
 ```
 
@@ -358,6 +379,6 @@ datatest %>%
 
 datatest %>%
   group_by(Group) %>%
-  count('Research Experience')
+  count(research_experience)
 
 ```

@@ -25,11 +25,11 @@ library(ggeasy)
 
 clean_data <- read_csv(here("data", "dateStudy2data_clean.csv"))
 
-summary_data <- read_csv(here("data", "summary_data.csv"))
+summary_data <- read_csv(here("data", "summary_data_study2.csv"))
 
-manipcheck <- read_csv(here("data", "manipcheck.csv"))
+manipcheck <- read_csv(here("data", "manipcheck2.csv"))
 
-per_att_int <- read_csv(here("data", "per_att_int.csv"))
+per_att_int <- read_csv(here("data", "per_att_int2.csv"))
 
 ```
 
@@ -40,7 +40,7 @@ per_att_int <- read_csv(here("data", "per_att_int.csv"))
 manipcheck <- manipcheck %>%
   mutate(group = factor(group, 
                         levels = c("gain", "loss"),
-                        labels = c("Gain group", "Loss group")))
+                        labels = c("Gain", "Loss")))
 
 manipcheck <- manipcheck %>%
   mutate(question = factor(question, 
@@ -48,17 +48,17 @@ manipcheck <- manipcheck %>%
                         labels = c("Positive benefits", "Negative consequences")))
 
 manipcheck %>%
-    ggplot(aes(x = question, y = mean, fill = question)) +
+    ggplot(aes(x = group, y = mean, fill = group)) +
     geom_col(width = 0.7, position = "dodge", show.legend = FALSE) +
     scale_y_continuous(expand = c(0,0),
                        limits = c(0,5)) +
     theme_classic() +
-    facet_wrap(~ group) +
+    facet_wrap(~ question) +
     geom_errorbar(aes(ymin=mean-StdErr, ymax=mean+StdErr),
                   size=.3,
                   width=.2,
                   position=position_dodge(.9)) +
-     labs(x="Type of information", y="Mean ratings of information")
+     labs(x="Condition", y="Mean ratings of information")
 
 ```
 
@@ -73,13 +73,13 @@ glimpse(per_att_int)
 
   per_att_int$group[per_att_int$group == "gain"] <- "Gain"
   per_att_int$group[per_att_int$group == "loss"] <- "Loss"
-  per_att_int$question[per_att_int$question == "perception"] <- "Perception"
-  per_att_int$question[per_att_int$question == "attitude"] <- "Attitude"
-  per_att_int$question[per_att_int$question == "intention"] <- "Intention"
+  per_att_int$question[per_att_int$question == "perception"] <- "a) Perception"
+  per_att_int$question[per_att_int$question == "attitude"] <- "b) Attitude"
+  per_att_int$question[per_att_int$question == "intention"] <- "c) Intention"
 
 per_att_int_ordered <- per_att_int
 per_att_int_ordered$question <- factor(per_att_int_ordered$question,
-                         levels = c("Perception", "Attitude", "Intention"))
+                         levels = c("a) Perception", "b) Attitude", "c) Intention"))
 
 per_att_int_ordered %>%
     ggplot(aes(x = group, y = mean, fill = group)) +

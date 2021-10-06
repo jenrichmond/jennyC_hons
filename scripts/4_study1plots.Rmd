@@ -38,7 +38,6 @@ Continuous variable: perception_1, mean_att, mean_int
 
 Column graph:
 
-
 ```{r}
 
 gainmanip <- manipcheck %>%
@@ -62,7 +61,6 @@ Geom jitter plot:
 
 > JR note you only need to do this once, once you have converted group in the clean_data df to a factor and told R you want the levels to be listed as Gain Loss, it will use that same factor structure every time you use the dataframe. 
 
-
 ```{r}
 
 clean_data <- clean_data %>%
@@ -71,7 +69,6 @@ clean_data <- clean_data %>%
                         labels = c("Gain", "Loss")))
 
 ```
-
 
 ```{r}
 
@@ -332,13 +329,13 @@ glimpse(per_att_int)
 
   per_att_int$group[per_att_int$group == "gain"] <- "Gain"
   per_att_int$group[per_att_int$group == "loss"] <- "Loss"
-  per_att_int$question[per_att_int$question == "perception"] <- "Perception"
-  per_att_int$question[per_att_int$question == "attitude"] <- "Attitude"
-  per_att_int$question[per_att_int$question == "intention"] <- "Intention"
+  per_att_int$question[per_att_int$question == "perception"] <- "a) Perception"
+  per_att_int$question[per_att_int$question == "attitude"] <- "b) Attitude"
+  per_att_int$question[per_att_int$question == "intention"] <- "c) Intention"
 
 per_att_int_ordered <- per_att_int
 per_att_int_ordered$question <- factor(per_att_int_ordered$question,
-                         levels = c("Perception", "Attitude", "Intention"))
+                         levels = c("a) Perception", "b) Attitude", "c) Intention"))
 
 per_att_int_ordered %>%
     ggplot(aes(x = group, y = mean, fill = group)) +
